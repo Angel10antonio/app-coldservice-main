@@ -22,6 +22,7 @@ const ReportesScreen = ({ navigation }) => {
   const [serviceDescription, setServiceDescription] = useState('');
   const [date, setDate] = useState(new Date());
   const [location, setLocation] = useState('');
+  const [sucursal, setSucursal] = useState('');
   const [piezaName, setPiezaName] = useState('');
   const [loading, setLoading] = useState(false);
   const [showDatePicker, setShowDatePicker] = useState(false);
@@ -68,7 +69,7 @@ const ReportesScreen = ({ navigation }) => {
 
   // Guardar reporte
   const saveReport = async () => {
-    if (!clientName || !serviceDescription || !date || !location || !piezaName) {
+    if (!clientName || !serviceDescription || !date || !location || !sucursal|| !piezaName) {
       Alert.alert('Error', 'Completa todos los campos.');
       return;
     }
@@ -80,6 +81,7 @@ const ReportesScreen = ({ navigation }) => {
         serviceDescription,
         date: date.toISOString().split('T')[0],
         location,
+        sucursal,
         piezaName,
         estado,
         fotos: images, // Guardar la lista de imágenes
@@ -92,6 +94,7 @@ const ReportesScreen = ({ navigation }) => {
       setDate(new Date());
       setLocation('');
       setPiezaName('');
+      setSucursal('');
       setImages([]); // Limpiar las imágenes
       navigation.goBack();
     } catch (error) {
@@ -142,6 +145,9 @@ const ReportesScreen = ({ navigation }) => {
       <Text style={styles.label}>Ubicación</Text>
       <TextInput style={styles.input} value={location} onChangeText={setLocation} placeholder="Ingresa la ubicación" />
 
+      <Text style={styles.label}>Sucursal</Text>
+      <TextInput style={styles.input} value={sucursal} onChangeText={setSucursal} placeholder="Ingresa el nombre de la Sucursal" />
+
       {/* Botón para tomar fotos */}
       <TouchableOpacity style={styles.photoButton} onPress={takePhoto}>
         <Icon name="camera-alt" size={20} color="#fff" />
@@ -177,7 +183,7 @@ const ReportesScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 20,
+    padding: 10,
     backgroundColor: '#f5f5f5',
   },
   title: {
@@ -255,9 +261,13 @@ const styles = StyleSheet.create({
   },
   saveButton: {
     backgroundColor: '#007bff',
-    padding: 15,
+    paddingVertical: 15, // Asegura que haya suficiente espacio vertical
+    paddingHorizontal: 20,
     borderRadius: 10,
     alignItems: 'center',
+    height: 60,  // Puedes ajustar esta altura si es necesario
+    justifyContent: 'center', // Asegura que el texto se centre verticalmente
+    marginBottom:30,
   },
   saveButtonText: {
     color: '#fff',

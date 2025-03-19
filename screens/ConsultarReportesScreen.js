@@ -98,6 +98,7 @@ const ConsultarReportesScreen = ({ route }) => {
            <Text style={styles.label}>Descripción: {reporte.serviceDescription || 'Sin descripción'}</Text>
            <Text style={styles.label}>Fecha: {reporte.date || 'Fecha no disponible'}</Text>
            <Text style={styles.label}>Ubicación: {reporte.location || 'Ubicación desconocida'}</Text>
+           <Text style={styles.label}>Sucursal: {reporte.sucursal || 'Sucursal no especificada'}</Text>
            <Text style={styles.label}>Nombre de la Pieza: {reporte.piezaName || 'Pieza no especificada'}</Text>
            <Text style={styles.label}>Estado Actual: {reporte.estado || 'proceso'}</Text>
 

@@ -19,6 +19,7 @@ const LoginScreen = ({ navigation }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
+  const [isPasswordVisible, setIsPasswordVisible] = useState(false); 
 
   const validateEmail = (email) => {
     const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -75,20 +76,23 @@ const LoginScreen = ({ navigation }) => {
         </View>
 
         <View style={styles.inputGroup}>
-          <Ionicons
-            name="lock-closed"
-            size={24}
-            color="#007BFF"
-            style={styles.icon}
-          />
+          <Ionicons name="lock-closed" size={24} color="#007BFF" style={styles.icon} />
           <TextInput
             style={styles.input}
             placeholder="Contraseña"
             placeholderTextColor="#888"
             value={password}
             onChangeText={setPassword}
-            secureTextEntry
+            secureTextEntry={!isPasswordVisible} // Alternar visibilidad
           />
+          <TouchableOpacity onPress={() => setIsPasswordVisible(!isPasswordVisible)}>
+            <Ionicons
+              name={isPasswordVisible ? "eye" : "eye-off"}
+              size={24}
+              color="#007BFF"
+              style={styles.icon}
+            />
+          </TouchableOpacity>
         </View>
 
         {loading ? (
