@@ -2,6 +2,7 @@ import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { AuthProvider } from './context/AuthContext'; // Importa el AuthProvider
+import { ThemeProvider } from './context/ThemeContext';
 
 // Importa las pantallas
 import LoginScreen from './screens/LoginScreen';
@@ -10,7 +11,10 @@ import UserList from './screens/UserList';
 import CreateUserScreen from './screens/CreateUserScreen';
 import UserDetailScreen from './screens/UserDetailScreen';
 import ReportesScreen from './screens/ReportesScreen';
+import ReporteViaticosScreen from './screens/ReporteViaticosScreen'; // Importa la pantalla de reporte de viáticos
 import ConsultarReportesScreen from './screens/ConsultarReportesScreen';
+import ConfigScreen from './screens/ConfigScreen';
+import MenuScreen from './screens/MenuScreen';
 
 // Crea el navegador de pila
 const Stack = createNativeStackNavigator();
@@ -18,48 +22,71 @@ const Stack = createNativeStackNavigator();
 // Define la pila de navegación
 function MyStack() {
   return (
-    <Stack.Navigator>
-      {/* Pantalla de inicio de sesión */}
-      <Stack.Screen
-        name="LoginScreen"
-        component={LoginScreen}
-        options={{ headerShown: false }} // Oculta el header en LoginScreen
-      />
+    <ThemeProvider>
+      <Stack.Navigator>
+        {/* Pantalla de inicio de sesión */}
+        <Stack.Screen
+          name="LoginScreen"
+          component={LoginScreen}
+          options={{ headerShown: false }} // Oculta el header en LoginScreen
+        />
 
-      {/* Pantalla principal */}
-      <Stack.Screen
-        name="HomeScreen"
-        component={HomeScreen}
-        options={{ title: 'Home Screen' }} // Personaliza el título
-      />
+        {/* Pantalla principal */}
+        <Stack.Screen
+          name="HomeScreen"
+          component={HomeScreen}
+          options={{ title: 'Home Screen' }} // Personaliza el título
+        />
 
-      {/* Otras pantallas */}
-      <Stack.Screen
-        name="UserList"
-        component={UserList}
-        options={{ title: 'Lista de Usuarios' }}
-      />
-      <Stack.Screen
-        name="CreateUserScreen"
-        component={CreateUserScreen}
-        options={{ title: 'Crear Usuario' }}
-      />
-      <Stack.Screen
-        name="UserDetailScreen"
-        component={UserDetailScreen}
-        options={{ title: 'Detalle del Usuario' }}
-      />
-      <Stack.Screen
-        name="ReportesScreen"
-        component={ReportesScreen}
-        options={{ title: 'Reportes de Servicio' }}
-      />
-      <Stack.Screen
-        name="ConsultarReportesScreen"
-        component={ConsultarReportesScreen}
-        options={{ title: 'Consultar Reportes' }}
-      />
-    </Stack.Navigator>
+        {/* Pantalla de menú */}
+        <Stack.Screen
+          name="MenuScreen"
+          component={MenuScreen}
+          options={{ title: 'Menú' }}
+        />
+
+        {/* Otras pantallas */}
+        <Stack.Screen
+          name="UserList"
+          component={UserList}
+          options={{ title: 'Lista de Usuarios' }}
+        />
+        <Stack.Screen
+          name="CreateUserScreen"
+          component={CreateUserScreen}
+          options={{ title: 'Crear Usuario' }}
+        />
+        <Stack.Screen
+          name="UserDetailScreen"
+          component={UserDetailScreen}
+          options={{ title: 'Detalle del Usuario' }}
+        />
+        <Stack.Screen
+          name="ReportesScreen"
+          component={ReportesScreen}
+          options={{ title: 'Reportes de Servicio' }}
+        />
+        <Stack.Screen
+          name="ConsultarReportesScreen"
+          component={ConsultarReportesScreen}
+          options={{ title: 'Consultar Reportes' }}
+        />
+
+        {/* Nueva pantalla de reporte de viáticos */}
+        <Stack.Screen
+          name="ReporteViaticosScreen" // Registra la pantalla de reporte de viáticos
+          component={ReporteViaticosScreen}
+          options={{ title: 'Reporte de Viáticos' }}
+        />
+
+        {/* Pantalla de configuración */}
+        <Stack.Screen
+          name="ConfigScreen"
+          component={ConfigScreen}
+          options={{ title: 'Configuración' }}
+        />
+      </Stack.Navigator>
+    </ThemeProvider>
   );
 }
 

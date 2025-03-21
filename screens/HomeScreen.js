@@ -50,21 +50,37 @@ const HomeScreen = ({ navigation, route }) => {
         </TouchableOpacity>
       )}
 
-      {/* Botón de WhatsApp (visible para todos) */}
-      <TouchableOpacity
-        style={styles.whatsappButton}
-        onPress={() => Linking.openURL('https://wa.me/+526621829724')}
-      >
-        <FontAwesome name="whatsapp" size={24} color="green" />
-      </TouchableOpacity>
+      {/* Barra de íconos al pie de la pantalla */}
+      <View style={styles.bottomBar}>
+        
+        {/* Botón de Mensajes */}
+        <TouchableOpacity style={styles.mensajes}>
+          <FontAwesome name="comments" size={24} color="black" />
+        </TouchableOpacity>
 
-      {/* Botón de Atrás (regresa al LoginScreen*/}
-      <TouchableOpacity
-        style={styles.backButtonBottom}
-        onPress={handleGoBack} // Regresa al LoginScreen
-      >
-        <FontAwesome name="sign-out" size={24} color="#000" />
-      </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.configuracion}
+          onPress={() => navigation.navigate('ConfigScreen')} // Navega a la pantalla de configuración
+        >
+          <FontAwesome name="cogs" size={24} color="black" />
+        </TouchableOpacity>
+
+        {/* Botón de Home */}
+        <TouchableOpacity style={styles.menu}
+        onPress={() => navigation.navigate('MenuScreen')} // Navega a la pantalla de configuración
+        >
+
+          <FontAwesome name="home" size={24} color="black" />
+        </TouchableOpacity>
+
+        {/* Botón de Cerrar Sesión */}
+        <TouchableOpacity
+          style={styles.cerrarsesion}
+          onPress={handleGoBack} // Regresa al LoginScreen
+        >
+          <FontAwesome name="sign-out" size={24} color="#000" />
+        </TouchableOpacity>
+      </View>
     </View>
   );
 };
@@ -96,21 +112,48 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: 'bold',
   },
-  whatsappButton: {
+  bottomBar: {
     position: 'absolute',
-    bottom: 20,
-    right: 20,
+    bottom: 0,
+    left: 0,
+    right: 0,
+    flexDirection: 'row',
+    justifyContent: 'space-around',
     padding: 15,
-    backgroundColor: '#25D366',
-    borderRadius: 50,
+    backgroundColor: '#f5f5f5', // Fondo de la barra
+    borderTopWidth: 1,
+    borderTopColor: 'grey',
   },
-  backButtonBottom: {
-    position: 'absolute',
-    bottom: 20,
-    left: 20,
+  menu: {
     padding: 15,
     backgroundColor: '#ddd',
     borderRadius: 50,
+    justifyContent: 'center',
+    alignItems: 'center',
+    right: 190
+  },
+  mensajes: {
+    padding: 15,
+    backgroundColor: '#ddd',
+    borderRadius: 50,
+    justifyContent: 'center',
+    alignItems: 'center',
+    left: 95,
+  },
+  configuracion: {
+    padding: 15,
+    backgroundColor: '#ddd',
+    borderRadius: 50,
+    justifyContent: 'center',
+    alignItems: 'center',
+    left: 100,
+  },
+  cerrarsesion: {
+    padding: 15,
+    backgroundColor: '#ddd',
+    borderRadius: 50,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });
 
