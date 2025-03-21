@@ -3,6 +3,7 @@ import { View, Text, TouchableOpacity, Linking, StyleSheet, Alert } from 'react-
 import { FontAwesome } from '@expo/vector-icons';
 import { auth } from '../database/firebase';
 
+
 const HomeScreen = ({ navigation, route }) => {
   const { userRole } = route.params; // Obtén el rol del usuario
 
@@ -66,8 +67,7 @@ const HomeScreen = ({ navigation, route }) => {
         </TouchableOpacity>
 
         {/* Botón de Home */}
-        <TouchableOpacity style={styles.menu}
-        onPress={() => navigation.navigate('MenuScreen')} // Navega a la pantalla de configuración
+        <TouchableOpacity style={styles.menu}// Navega a la pantalla de configuración
         >
 
           <FontAwesome name="home" size={24} color="black" />

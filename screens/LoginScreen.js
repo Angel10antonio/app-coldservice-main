@@ -43,7 +43,7 @@ const LoginScreen = ({ navigation }) => {
       if (userCredential.user) {
         const userDoc = await db.collection("users").doc(userCredential.user.uid).get(); // Usa db correctamente
         const userRole = userDoc.data().role;
-        navigation.replace("MenuScreen", { userRole });
+        navigation.replace("HomeScreen", { userRole });
       }
     } catch (error) {
       console.error("Error al iniciar sesión:", error);

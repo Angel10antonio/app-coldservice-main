@@ -14,7 +14,7 @@ import ReportesScreen from './screens/ReportesScreen';
 import ReporteViaticosScreen from './screens/ReporteViaticosScreen'; // Importa la pantalla de reporte de viáticos
 import ConsultarReportesScreen from './screens/ConsultarReportesScreen';
 import ConfigScreen from './screens/ConfigScreen';
-import MenuScreen from './screens/MenuScreen';
+
 
 // Crea el navegador de pila
 const Stack = createNativeStackNavigator();
@@ -37,14 +37,6 @@ function MyStack() {
           component={HomeScreen}
           options={{ title: 'Home Screen' }} // Personaliza el título
         />
-
-        {/* Pantalla de menú */}
-        <Stack.Screen
-          name="MenuScreen"
-          component={MenuScreen}
-          options={{ title: 'Menú' }}
-        />
-
         {/* Otras pantallas */}
         <Stack.Screen
           name="UserList"
