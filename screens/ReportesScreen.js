@@ -26,11 +26,10 @@ const ReportesScreen = ({ navigation }) => {
   const [piezaName, setPiezaName] = useState('');
   const [loading, setLoading] = useState(false);
   const [showDatePicker, setShowDatePicker] = useState(false);
-  const [images, setImages] = useState([]); // Estado para múltiples fotos
+  const [images, setImages] = useState([]);
 
   const estado = 'completado';
 
-  // Función para abrir la cámara y capturar una imagen
   const takePhoto = async () => {
     const { status } = await ImagePicker.requestCameraPermissionsAsync();
     if (status !== 'granted') {
@@ -45,11 +44,10 @@ const ReportesScreen = ({ navigation }) => {
     });
 
     if (!result.canceled) {
-      setImages([...images, result.assets[0].uri]); // Agregar nueva imagen a la lista
+      setImages([...images, result.assets[0].uri]);
     }
   };
 
-  // Función para seleccionar imágenes de la galería
   const pickImage = async () => {
     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
     if (status !== 'granted') {
@@ -63,13 +61,31 @@ const ReportesScreen = ({ navigation }) => {
     });
 
     if (!result.canceled) {
-      setImages([...images, result.assets[0].uri]); // Agregar nueva imagen a la lista
+      setImages([...images, result.assets[0].uri]);
     }
   };
 
-  // Guardar reporte
+  const removeImage = (index) => {
+    Alert.alert(
+      'Eliminar imagen',
+      '¿Estás seguro de que deseas eliminar esta imagen?',
+      [
+        { text: 'Cancelar', style: 'cancel' },
+        {
+          text: 'Eliminar',
+          onPress: () => {
+            const updatedImages = [...images];
+            updatedImages.splice(index, 1);
+            setImages(updatedImages);
+          },
+          style: 'destructive',
+        },
+      ]
+    );
+  };
+
   const saveReport = async () => {
-    if (!clientName || !serviceDescription || !date || !location || !sucursal|| !piezaName) {
+    if (!clientName || !serviceDescription || !date || !location || !sucursal || !piezaName) {
       Alert.alert('Error', 'Completa todos los campos.');
       return;
     }
@@ -84,7 +100,7 @@ const ReportesScreen = ({ navigation }) => {
         sucursal,
         piezaName,
         estado,
-        fotos: images, // Guardar la lista de imágenes
+        fotos: images,
         createdAt: firebaseInstance.firestore.FieldValue.serverTimestamp(),
       });
 
@@ -95,7 +111,7 @@ const ReportesScreen = ({ navigation }) => {
       setLocation('');
       setPiezaName('');
       setSucursal('');
-      setImages([]); // Limpiar las imágenes
+      setImages([]);
       navigation.goBack();
     } catch (error) {
       console.error('Error al guardar el reporte:', error);
@@ -110,7 +126,12 @@ const ReportesScreen = ({ navigation }) => {
       <Text style={styles.title}>Reporte de Servicio</Text>
 
       <Text style={styles.label}>Nombre del Cliente</Text>
-      <TextInput style={styles.input} value={clientName} onChangeText={setClientName} placeholder="Ingresa el nombre" />
+      <TextInput
+        style={styles.input}
+        value={clientName}
+        onChangeText={setClientName}
+        placeholder="Ingresa el nombre"
+      />
 
       <Text style={styles.label}>Descripción del Servicio</Text>
       <TextInput
@@ -122,7 +143,12 @@ const ReportesScreen = ({ navigation }) => {
       />
 
       <Text style={styles.label}>Nombre de la Pieza/s</Text>
-      <TextInput style={styles.input} value={piezaName} onChangeText={setPiezaName} placeholder="Ingresa el nombre de la pieza" />
+      <TextInput
+        style={styles.input}
+        value={piezaName}
+        onChangeText={setPiezaName}
+        placeholder="Ingresa el nombre de la pieza"
+      />
 
       <Text style={styles.label}>Fecha</Text>
       <TouchableOpacity style={styles.dateButton} onPress={() => setShowDatePicker(true)}>
@@ -143,28 +169,43 @@ const ReportesScreen = ({ navigation }) => {
       <Text style={styles.selectedDateText}>Fecha seleccionada: {date.toLocaleDateString()}</Text>
 
       <Text style={styles.label}>Ubicación</Text>
-      <TextInput style={styles.input} value={location} onChangeText={setLocation} placeholder="Ingresa la ubicación" />
+      <TextInput
+        style={styles.input}
+        value={location}
+        onChangeText={setLocation}
+        placeholder="Ingresa la ubicación"
+      />
 
       <Text style={styles.label}>Sucursal</Text>
-      <TextInput style={styles.input} value={sucursal} onChangeText={setSucursal} placeholder="Ingresa el nombre de la Sucursal" />
+      <TextInput
+        style={styles.input}
+        value={sucursal}
+        onChangeText={setSucursal}
+        placeholder="Ingresa el nombre de la Sucursal"
+      />
 
-      {/* Botón para tomar fotos */}
       <TouchableOpacity style={styles.photoButton} onPress={takePhoto}>
         <Icon name="camera-alt" size={20} color="#fff" />
         <Text style={styles.photoButtonText}>Tomar Foto</Text>
       </TouchableOpacity>
 
-      {/* Botón para seleccionar fotos de la galería */}
       <TouchableOpacity style={styles.photoButton} onPress={pickImage}>
         <Icon name="photo-library" size={20} color="#fff" />
         <Text style={styles.photoButtonText}>Seleccionar Foto</Text>
       </TouchableOpacity>
 
-      {/* Mostrar todas las imágenes capturadas */}
       {images.length > 0 && (
         <ScrollView horizontal style={styles.imageContainer}>
           {images.map((img, index) => (
-            <Image key={index} source={{ uri: img }} style={styles.imagePreview} />
+            <View key={index} style={styles.imageWrapper}>
+              <Image source={{ uri: img }} style={styles.imagePreview} />
+              <TouchableOpacity
+                style={styles.removeButton}
+                onPress={() => removeImage(index)}
+              >
+                <Icon name="close" size={20} color="#fff" />
+              </TouchableOpacity>
+            </View>
           ))}
         </ScrollView>
       )}
@@ -253,21 +294,36 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     marginBottom: 20,
   },
+  imageWrapper: {
+    position: 'relative',
+    marginRight: 10,
+  },
   imagePreview: {
     width: 100,
     height: 100,
-    marginRight: 10,
     borderRadius: 10,
+  },
+  removeButton: {
+    position: 'absolute',
+    top: 5,
+    right: 5,
+    backgroundColor: 'rgba(0,0,0,0.6)',
+    borderRadius: 15,
+    width: 30,
+    height: 30,
+    justifyContent: 'center',
+    alignItems: 'center',
+    zIndex: 1,
   },
   saveButton: {
     backgroundColor: '#007bff',
-    paddingVertical: 15, // Asegura que haya suficiente espacio vertical
+    paddingVertical: 15,
     paddingHorizontal: 20,
     borderRadius: 10,
     alignItems: 'center',
-    height: 60,  // Puedes ajustar esta altura si es necesario
-    justifyContent: 'center', // Asegura que el texto se centre verticalmente
-    marginBottom:30,
+    height: 60,
+    justifyContent: 'center',
+    marginBottom: 30,
   },
   saveButtonText: {
     color: '#fff',

@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { 
   View, Text, StyleSheet, ScrollView, TouchableOpacity, 
-  Alert, ActivityIndicator, Image, Modal 
+  Alert, ActivityIndicator, Image, Modal, Pressable 
 } from 'react-native';
 import firebase from '../database/firebase';
+import Icon from 'react-native-vector-icons/MaterialIcons';
 
 const { db } = firebase;
 
@@ -12,8 +13,6 @@ const ConsultarReportesScreen = ({ route }) => {
   const [reportes, setReportes] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showOptions, setShowOptions] = useState({});
-  
-  // Estado para manejar el modal y la imagen seleccionada
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedImage, setSelectedImage] = useState(null);
 
@@ -64,7 +63,6 @@ const ConsultarReportesScreen = ({ route }) => {
     }));
   };
 
-  // Función para abrir la imagen en el modal
   const openImageModal = (imageUri) => {
     setSelectedImage(imageUri);
     setModalVisible(true);
@@ -87,76 +85,45 @@ const ConsultarReportesScreen = ({ route }) => {
       ) : (
         reportes.map((reporte) => (
           <View key={reporte.id} style={styles.reporteContainer}>
-            {/*<Text style={styles.label}>Nombre del Cliente: {reporte.clientName}</Text>*/}
-            {/*<Text style={styles.label}>Descripción: {reporte.serviceDescription}</Text>*/}
-            {/*<Text style={styles.label}>Fecha: {reporte.date}</Text>*/}
-            {/*<Text style={styles.label}>Ubicación: {reporte.location}</Text>*/}
-            {/*<Text style={styles.label}>Nombre de la Pieza: {reporte.piezaName}</Text>*/}  
-            {/*<Text style={styles.label}>Estado Actual: {reporte.estado || 'proceso'}</Text> */}
-           
-           <Text style={styles.label}>Nombre del Cliente: {reporte.clientName || 'Sin nombre'}</Text>
-           <Text style={styles.label}>Descripción: {reporte.serviceDescription || 'Sin descripción'}</Text>
-           <Text style={styles.label}>Fecha: {reporte.date || 'Fecha no disponible'}</Text>
-           <Text style={styles.label}>Ubicación: {reporte.location || 'Ubicación desconocida'}</Text>
-           <Text style={styles.label}>Sucursal: {reporte.sucursal || 'Sucursal no especificada'}</Text>
-           <Text style={styles.label}>Nombre de la Pieza: {reporte.piezaName || 'Pieza no especificada'}</Text>
-           <Text style={styles.label}>Estado Actual: {reporte.estado || 'proceso'}</Text>
+            <Text style={styles.label}>Cliente: {reporte.clientName || 'Sin nombre'}</Text>
+            <Text style={styles.label}>Descripción: {reporte.serviceDescription || 'Sin descripción'}</Text>
+            <Text style={styles.label}>Fecha: {reporte.date || 'No disponible'}</Text>
+            <Text style={styles.label}>Ubicación: {reporte.location || 'Desconocida'}</Text>
+            <Text style={styles.label}>Sucursal: {reporte.sucursal || 'No especificada'}</Text>
+            <Text style={styles.label}>Pieza: {reporte.piezaName || 'Sin nombre'}</Text>
+            <Text style={styles.label}>Estado: {reporte.estado || 'proceso'}</Text>
 
-            {userRole === 'admin' && (
-              <TouchableOpacity
-                style={styles.button}
-                onPress={() => toggleOptions(reporte.id)}
-              >
-                <Text style={styles.buttonText}>Cambiar Estado</Text>
-              </TouchableOpacity>
-            )}
-
-            {showOptions[reporte.id] && userRole === 'admin' && (
-              <View style={styles.optionsContainer}>
-                <TouchableOpacity
-                  style={styles.optionButton}
-                  onPress={() => updateEstado(reporte.id, 'proceso')}
-                >
-                  <Text style={styles.optionButtonText}>Proceso</Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                  style={styles.optionButton}
-                  onPress={() => updateEstado(reporte.id, 'completado')}
-                >
-                  <Text style={styles.optionButtonText}>Completado</Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                  style={styles.optionButton}
-                  onPress={() => updateEstado(reporte.id, 'pagado')}
-                >
-                  <Text style={styles.optionButtonText}>Pagado</Text>
-                </TouchableOpacity>
-              </View>
-            )}
-
-            {/* Mostrar todas las imágenes del reporte */}
-            {reporte.fotos && reporte.fotos.length > 0 && (
+            {reporte.fotos?.length > 0 && (
               <ScrollView horizontal style={styles.imageContainer}>
                 {reporte.fotos.map((foto, index) => (
                   <TouchableOpacity key={index} onPress={() => openImageModal(foto)}>
-                    <Image source={{ uri: foto }} style={styles.photo} />
+                    <Image source={{ uri: foto }} style={styles.imagePreview} />
                   </TouchableOpacity>
                 ))}
               </ScrollView>
+            )}
+
+            {userRole === 'admin' && (
+              <TouchableOpacity
+                style={styles.estadoButton}
+                onPress={() => updateEstado(reporte.id, reporte.estado === 'proceso' ? 'completado' : 'proceso')}
+              >
+                <Text style={styles.estadoButtonText}>
+                  Cambiar a {reporte.estado === 'proceso' ? 'completado' : 'proceso'}
+                </Text>
+              </TouchableOpacity>
             )}
           </View>
         ))
       )}
 
-      {/* Modal para ver la imagen a pantalla completa */}
-      <Modal visible={modalVisible} transparent={true} animationType="fade">
+      {/* Modal para imagen ampliada */}
+      <Modal visible={modalVisible} transparent animationType="fade">
         <View style={styles.modalContainer}>
-          <Image source={{ uri: selectedImage }} style={styles.fullScreenImage} />
-          <TouchableOpacity
-            style={styles.closeModalButton}
-            onPress={() => setModalVisible(false)}
-          >
-            <Text style={styles.closeModalButtonText}>Cerrar</Text>
+          <Pressable style={styles.modalCloseArea} onPress={() => setModalVisible(false)} />
+          <Image source={{ uri: selectedImage }} style={styles.fullImage} resizeMode="contain" />
+          <TouchableOpacity style={styles.modalCloseButton} onPress={() => setModalVisible(false)}>
+            <Icon name="close" size={30} color="#fff" />
           </TouchableOpacity>
         </View>
       </Modal>
@@ -165,101 +132,67 @@ const ConsultarReportesScreen = ({ route }) => {
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: 20,
-    backgroundColor: '#f5f5f5',
-  },
+  container: { flex: 1, padding: 20, backgroundColor: '#f5f5f5' },
   title: {
-    fontSize: 28,
-    fontWeight: 'bold',
-    textAlign: 'center',
-    marginBottom: 20,
-    color: '#333',
+    fontSize: 24, 
+    fontWeight: 'bold', 
+    marginBottom: 20, 
+    textAlign: 'center', 
+    color: '#333', 
+    fontFamily: 'Roboto',  // Puedes cambiar la fuente si prefieres alguna otra
   },
-  noReportesText: {
-    fontSize: 16,
-    color: '#666',
-    textAlign: 'center',
-  },
+  loadingContainer: { flex: 1, justifyContent: 'center', alignItems: 'center' },
+  noReportesText: { fontSize: 16, textAlign: 'center', marginTop: 20, color: '#555' },
   reporteContainer: {
-    marginBottom: 20,
-    padding: 15,
-    backgroundColor: '#fff',
-    borderRadius: 10,
+    backgroundColor: '#fff', 
+    padding: 15, 
+    marginBottom: 20, 
+    borderRadius: 10, 
+    elevation: 5,
     shadowColor: '#000',
     shadowOpacity: 0.1,
-    shadowRadius: 10,
-    shadowOffset: { width: 0, height: 4 },
+    shadowRadius: 5,
   },
-  label: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    marginBottom: 5,
-    color: 'black',
+  label: { 
+    fontSize: 16, 
+    marginBottom: 5, 
+    color: '#555', 
+    fontFamily: 'Roboto',  // Mantiene una tipografía limpia y legible
   },
-  button: {
-    backgroundColor: '#007bff',
-    padding: 10,
-    borderRadius: 10,
-    marginTop: 10,
-    alignItems: 'center',
+  imageContainer: { flexDirection: 'row', marginTop: 10 },
+  imagePreview: {
+    width: 100, 
+    height: 100, 
+    borderRadius: 10, 
+    marginRight: 10, 
+    borderWidth: 1,
+    borderColor: '#ddd',
   },
-  buttonText: {
-    color: '#fff',
-    fontSize: 16,
-    fontWeight: 'bold',
+  estadoButton: {
+    backgroundColor: '#007bff', 
+    padding: 12, 
+    borderRadius: 8, 
+    alignItems: 'center', 
+    marginTop: 15,
   },
-  optionsContainer: {
-    marginTop: 10,
-  },
-  optionButton: {
-    backgroundColor: '#28a745',
-    padding: 10,
-    borderRadius: 5,
-    marginBottom: 5,
-    alignItems: 'center',
-  },
-  optionButtonText: {
-    color: '#fff',
-    fontSize: 16,
-  },
-  imageContainer: {
-    marginTop: 10,
-    flexDirection: 'row',
-  },
-  photo: {
-    width: 100,
-    height: 100,
-    marginRight: 10,
-    borderRadius: 10,
+  estadoButtonText: { 
+    color: '#fff', 
+    fontSize: 16, 
+    fontWeight: 'bold', 
   },
   modalContainer: {
-    flex: 1,
-    justifyContent: 'center',
+    flex: 1, 
+    backgroundColor: 'rgba(0,0,0,0.8)', 
+    justifyContent: 'center', 
     alignItems: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.7)',
   },
-  fullScreenImage: {
-    width: '100%',
-    height: '80%',
-    resizeMode: 'contain',
-  },
-  closeModalButton: {
-    position: 'absolute',
-    bottom: 30,
-    backgroundColor: '#fff',
+  modalCloseArea: { ...StyleSheet.absoluteFillObject },
+  fullImage: { width: '90%', height: '70%' },
+  modalCloseButton: {
+    position: 'absolute', 
+    top: 40, 
+    right: 20, 
     padding: 10,
-    borderRadius: 5,
-  },
-  closeModalButtonText: {
-    fontSize: 16,
-    color: '#007bff',
-  },
-  loadingContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
   },
 });
 
