@@ -3,10 +3,11 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { AuthProvider } from './context/AuthContext'; // Importa el AuthProvider
 import { ThemeProvider } from './context/ThemeContext';
+import HomeTabs from './screens/HomeTabs';
 
 // Importa las pantallas
 import LoginScreen from './screens/LoginScreen';
-import HomeScreen from './screens/HomeScreen';
+import HomeScreen from './screens/MainHomeScreen';
 import UserList from './screens/UserList';
 import CreateUserScreen from './screens/CreateUserScreen';
 import UserDetailScreen from './screens/UserDetailScreen';
@@ -18,6 +19,7 @@ import ConfigScreen from './screens/ConfigScreen';
 
 // Crea el navegador de pila
 const Stack = createNativeStackNavigator();
+
 
 // Define la pila de navegación
 function MyStack() {
@@ -33,9 +35,9 @@ function MyStack() {
 
         {/* Pantalla principal */}
         <Stack.Screen
-          name="HomeScreen"
-          component={HomeScreen}
-          options={{ title: 'Home Screen' }} // Personaliza el título
+            name="HomeScreen"
+            component={HomeTabs} // ahora usa el Bottom Tabs
+            options={{ headerShown: false }}
         />
         {/* Otras pantallas */}
         <Stack.Screen
@@ -92,3 +94,6 @@ export default function App() {
     </AuthProvider>
   );
 }
+
+
+

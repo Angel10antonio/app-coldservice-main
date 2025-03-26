@@ -50,37 +50,6 @@ const HomeScreen = ({ navigation, route }) => {
           <Text style={styles.buttonText}>Servicio</Text>
         </TouchableOpacity>
       )}
-
-      {/* Barra de íconos al pie de la pantalla */}
-      <View style={styles.bottomBar}>
-        
-        {/* Botón de Mensajes */}
-        <TouchableOpacity style={styles.mensajes}>
-          <FontAwesome name="comments" size={24} color="black" />
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          style={styles.configuracion}
-          onPress={() => navigation.navigate('ConfigScreen')} // Navega a la pantalla de configuración
-        >
-          <FontAwesome name="cogs" size={24} color="black" />
-        </TouchableOpacity>
-
-        {/* Botón de Home */}
-        <TouchableOpacity style={styles.menu}// Navega a la pantalla de configuración
-        >
-
-          <FontAwesome name="home" size={24} color="black" />
-        </TouchableOpacity>
-
-        {/* Botón de Cerrar Sesión */}
-        <TouchableOpacity
-          style={styles.cerrarsesion}
-          onPress={handleGoBack} // Regresa al LoginScreen
-        >
-          <FontAwesome name="sign-out" size={24} color="#000" />
-        </TouchableOpacity>
-      </View>
     </View>
   );
 };

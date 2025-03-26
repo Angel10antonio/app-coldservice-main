@@ -24,6 +24,14 @@ const ConsultarReportesScreen = ({ route }) => {
         querySnapshot.forEach((doc) => {
           reportesData.push({ id: doc.id, ...doc.data() });
         });
+
+        // Ordenar los reportes por fecha (más reciente primero)
+        reportesData.sort((a, b) => {
+          const dateA = new Date(a.date); // Asumiendo que 'date' es un campo de fecha
+          const dateB = new Date(b.date);
+          return dateB - dateA; // Orden descendente
+        });
+
         setReportes(reportesData);
       } catch (error) {
         console.error('Error al obtener los reportes:', error);
@@ -139,7 +147,7 @@ const styles = StyleSheet.create({
     marginBottom: 20, 
     textAlign: 'center', 
     color: '#333', 
-    fontFamily: 'Roboto',  // Puedes cambiar la fuente si prefieres alguna otra
+    fontFamily: 'Roboto',
   },
   loadingContainer: { flex: 1, justifyContent: 'center', alignItems: 'center' },
   noReportesText: { fontSize: 16, textAlign: 'center', marginTop: 20, color: '#555' },
@@ -157,7 +165,7 @@ const styles = StyleSheet.create({
     fontSize: 16, 
     marginBottom: 5, 
     color: '#555', 
-    fontFamily: 'Roboto',  // Mantiene una tipografía limpia y legible
+    fontFamily: 'Roboto',
   },
   imageContainer: { flexDirection: 'row', marginTop: 10 },
   imagePreview: {
