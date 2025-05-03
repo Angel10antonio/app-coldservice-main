@@ -6,14 +6,22 @@ import {
   ScrollView,
   ActivityIndicator,
   Alert,
+  Modal,
+  Pressable,
+  Image,
+  TouchableOpacity
 } from 'react-native';
 import firebase from '../database/firebase';
+import Icon from 'react-native-vector-icons/MaterialIcons';
 
 const { db } = firebase;
 
 const ConsultarProcesoReparacionScreen = () => {
   const [procesos, setProcesos] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [modalVisible, setModalVisible] = useState(false);
+  const [selectedImage, setSelectedImage] = useState(null);
+  const [selectedSignature, setSelectedSignature] = useState(null);  // Para almacenar la firma seleccionada
 
   useEffect(() => {
     const fetchProcesos = async () => {
@@ -52,7 +60,7 @@ const ConsultarProcesoReparacionScreen = () => {
   }
 
   return (
-    <ScrollView style={styles.container}>
+    <ScrollView style={styles.container} contentContainerStyle={{ paddingBottom: 60 }}>
       <Text style={styles.title}>ATENCIÓN A REPORTES CORRECTIVOS</Text>
 
       {procesos.length === 0 ? (
@@ -81,14 +89,11 @@ const ConsultarProcesoReparacionScreen = () => {
             ? new Date(item.hora_terminacion).toLocaleTimeString()
             : 'No disponible';
 
-            
-
           return (
             <View key={item.id} style={styles.card}>
               <Text style={[styles.label, styles.bold]}>
-                Prestador de servicio: COLD SERVICE REFRIGERATION, SA DE C.V. (Héctor Ezpinoza)
+                Prestador de servicio: COLD SERVICE REFRIGERATION, SA DE C.V. (Héctor Espinoza)
               </Text>
-              {/*<Text style={styles.label}><Text style={styles.bold}>Plaza:</Text> {item.plaza || 'No especificado'}</Text>*/}
               <Text style={styles.label}>Plaza: {item.plaza || 'No especificado'}</Text>
               <Text style={styles.label}>Dirección de Tienda: {item.directienda || 'No especificado'}</Text>
               <Text style={styles.label}>Tienda: {item.tienda || 'No especificado'}</Text>
@@ -109,6 +114,18 @@ const ConsultarProcesoReparacionScreen = () => {
               <Text style={styles.title1}>Reporte de falla</Text>
               <Text style={styles.label}>Falla Reportada: {item.falla_reportada || 'No especificado'}</Text>
               <Text style={styles.label}>Reportada Por: {item.reportada_por || 'No especificado'}</Text>
+              {item.firma && (
+                <View style={styles.firmaContainer}>
+                  <Text style={styles.firmaLabel}>Firma:</Text>
+                  <TouchableOpacity onPress={() => {
+                    setSelectedSignature(item.firma);
+                    setSelectedImage(null);
+                    setModalVisible(true);
+                  }}>
+                    <Image source={{ uri: item.firma }} style={styles.firmaImage} />
+                  </TouchableOpacity>
+                </View>
+              )}
               <View style={styles.divider} />
               <Text style={styles.title1}>Descripción diagnostico al revisar</Text>
               <Text style={styles.label}>Descripción Diagnóstico: {item.descripcion_diagnostico || 'No especificado'}</Text>
@@ -130,7 +147,6 @@ const ConsultarProcesoReparacionScreen = () => {
               <Text style={styles.title1}>Materiales utilizados</Text>
               {item.materiales && item.materiales.length > 0 ? (item.materiales.map((material, index) => (
               <View key={index}>
-                
                 <Text style={styles.label}>Concepto: {material.concepto || 'No especificado'}</Text>
                 <Text style={styles.label}>Cantidad: {material.cantidad || 'No especificado'}</Text>
                 <Text style={styles.label}>Unidad: {material.unidad || 'No especificado'}</Text>
@@ -140,16 +156,24 @@ const ConsultarProcesoReparacionScreen = () => {
                 <Text style={styles.label}>No hay materiales disponibles</Text>
               )}
               <View style={styles.divider} />
-              
-              
               <Text style={styles.label}>Trabajos pendientes: {item.trabajo_pendiente|| 'Sin trabajos pendientes'}</Text>
-
-
               <Text style={styles.label}>Fecha Programada: {item.fecha_programada ? new Date(item.fecha_programada.toDate()).toLocaleDateString() : 'No especificado'}</Text>
 
               <View style={styles.divider} />
+              {/* Modal para imagen o firma ampliada */}
+              <Modal visible={modalVisible} transparent animationType="fade">
+                <View style={styles.modalContainer}>
+                  <Pressable style={styles.modalCloseArea} onPress={() => setModalVisible(false)} />
+                  <Image source={{ uri: selectedImage || selectedSignature }} style={styles.fullImage} resizeMode="contain" />
+                  <TouchableOpacity style={styles.modalCloseButton} onPress={() => setModalVisible(false)}>
+                    <Icon name="close" size={30} color="#000" />
+                  </TouchableOpacity>
+                </View>
+              </Modal>
               <Text style={styles.label}>Comentarios Adicionales: {item.comentarios_adicionales ? item.comentarios_adicionales : 'Sin comentarios adicionales'}</Text>
 
+              {/* ESPACIADOR FINAL AÑADIDO */}
+              <View style={{ height: 5 }} />
             </View>
           );
         })
@@ -158,18 +182,19 @@ const ConsultarProcesoReparacionScreen = () => {
   );
 };
 
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 20,
-    backgroundColor: '#f5f5f5',
+    backgroundColor: '#000080',
   },
   title: {
     fontSize: 24,
     fontWeight: 'bold',
     textAlign: 'center',
     marginBottom: 20,
-    color: '#333',
+    color: 'white',
   },
   title1: {
     fontSize: 18,
@@ -201,14 +226,53 @@ const styles = StyleSheet.create({
     color: '#555',
   },
   bold: {
-    fontWeight: 'bold', 
+    fontWeight: 'bold',
   },
   divider: {
     height: 2,
     backgroundColor: '#007bff',
     marginVertical: 10,
   },
-  
+  firmaContainer: {
+    marginTop: 10,
+    alignItems: 'center',
+  },
+  firmaLabel: {
+    fontSize: 18,
+    color: '#333',
+    marginBottom: 10,
+  },
+  firmaImage: {
+    width: 200,
+    height: 100,
+    borderRadius: 10,
+  },
+  modalContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(255, 255, 255, 0.7)',
+  },
+  modalCloseArea: {
+    position: 'absolute',
+    top: 0,
+    bottom: 0,
+    left: 0,
+    right: 0,
+  },
+  fullImage: {
+    width: '90%',
+    height: '80%',
+    borderRadius: 10,
+  },
+  modalCloseButton: {
+    position: 'absolute',
+    top: 30,
+    right: 30,
+    backgroundColor: 'white',
+    padding: 10,
+    borderRadius: 30,
+  },
 });
 
 export default ConsultarProcesoReparacionScreen;

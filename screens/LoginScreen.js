@@ -60,6 +60,7 @@ const LoginScreen = ({ navigation }) => {
       resizeMode="cover"
     >
       <SafeAreaView style={styles.container}>
+        
         <Text style={styles.title}>COLD SERVICE</Text>
 
         <View style={styles.inputGroup}>

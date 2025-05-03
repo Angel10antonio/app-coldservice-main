@@ -9,10 +9,12 @@ import {
   ActivityIndicator,
   TouchableOpacity,
   Image,
+  Modal,
 } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import Icon from 'react-native-vector-icons/MaterialIcons';
+import Signature from 'react-native-signature-canvas';
 import firebase from '../database/firebase';
 
 const { db, firebase: firebaseInstance } = firebase;
@@ -27,6 +29,8 @@ const ReportesScreen = ({ navigation }) => {
   const [loading, setLoading] = useState(false);
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [images, setImages] = useState([]);
+  const [signature, setSignature] = useState(null);
+  const [showSignatureModal, setShowSignatureModal] = useState(false);  // Para controlar el modal de firma
 
   const estado = 'completado';
 
@@ -84,9 +88,21 @@ const ReportesScreen = ({ navigation }) => {
     );
   };
 
+  const handleSignature = (sig) => {
+    if (sig) {
+      setSignature(sig);  // Guardamos la firma
+      setShowSignatureModal(false);  // Cerramos el modal de firma
+    }
+  };
+
   const saveReport = async () => {
     if (!clientName || !serviceDescription || !date || !location || !sucursal || !piezaName) {
       Alert.alert('Error', 'Completa todos los campos.');
+      return;
+    }
+
+    if (!signature) {
+      Alert.alert('Falta la firma', 'Por favor, añade una firma antes de guardar.');
       return;
     }
 
@@ -101,6 +117,7 @@ const ReportesScreen = ({ navigation }) => {
         piezaName,
         estado,
         fotos: images,
+        firma: signature,
         createdAt: firebaseInstance.firestore.FieldValue.serverTimestamp(),
       });
 
@@ -112,6 +129,7 @@ const ReportesScreen = ({ navigation }) => {
       setPiezaName('');
       setSucursal('');
       setImages([]);
+      setSignature(null);
       navigation.goBack();
     } catch (error) {
       console.error('Error al guardar el reporte:', error);
@@ -210,6 +228,26 @@ const ReportesScreen = ({ navigation }) => {
         </ScrollView>
       )}
 
+      {/* Mostrar la firma en el formulario */}
+      {signature && (
+        <View style={{ alignItems: 'center', marginBottom: 20 }}>
+          <Text style={styles.label}>Firma</Text>
+          <Image
+            source={{ uri: signature }}
+            style={{ width: 350, height: 220, borderWidth: 1, borderColor: '#ccc' }}
+          />
+        </View>
+      )}
+
+      {/* Botón para abrir el modal de firma */}
+      <TouchableOpacity
+        style={[styles.photoButton, { backgroundColor: '#6f42c1' }]}
+        onPress={() => setShowSignatureModal(true)}
+      >
+        <Icon name="edit" size={20} color="#fff" />
+        <Text style={styles.photoButtonText}>Firmar</Text>
+      </TouchableOpacity>
+
       {loading ? (
         <ActivityIndicator size="large" color="#007bff" />
       ) : (
@@ -217,6 +255,42 @@ const ReportesScreen = ({ navigation }) => {
           <Text style={styles.saveButtonText}>Guardar Reporte</Text>
         </TouchableOpacity>
       )}
+
+      {/* Modal de Firma */}
+<Modal visible={showSignatureModal} animationType="slide">
+  <View style={{ flex: 1 }}>
+    <Signature
+      onOK={handleSignature}
+      onEmpty={() => Alert.alert("Firma vacía")}
+      onClear={() => console.log("clear")}
+      onEnd={() => console.log("end")}
+      descriptionText="Firma aquí"
+      clearText="Limpiar"
+      confirmText="Guardar"
+      // Elimina webStyle si no es necesario o ajústalo
+      webStyle={`
+        .m-signature-pad--footer { 
+          display: flex;
+          justify-content: space-between;
+          padding: 10px;
+        }
+        .m-signature-pad--footer button {
+          background-color: #007bff;
+          color: #fff;
+          padding: 10px;
+          border: none;
+          border-radius: 5px;
+        }
+      `}
+    />
+    <TouchableOpacity
+      style={[styles.saveButton, { backgroundColor: '#dc3545', marginTop: 1 }]}
+      onPress={() => setShowSignatureModal(false)}
+    >
+      <Text style={styles.saveButtonText}>Cancelar</Text>
+    </TouchableOpacity>
+  </View>
+</Modal>
     </ScrollView>
   );
 };
@@ -259,39 +333,35 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: '#007bff',
-    padding: 15,
     borderRadius: 10,
-    marginBottom: 20,
+    padding: 12,
+    marginBottom: 10,
   },
   dateButtonText: {
     color: '#fff',
+    marginLeft: 8,
     fontSize: 16,
-    fontWeight: 'bold',
-    marginLeft: 10,
   },
   selectedDateText: {
-    fontSize: 14,
-    color: '#666',
-    textAlign: 'center',
+    fontSize: 16,
     marginBottom: 20,
+    color: '#555',
   },
   photoButton: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'center',
     backgroundColor: '#28a745',
-    padding: 15,
     borderRadius: 10,
-    marginBottom: 20,
+    padding: 12,
+    marginBottom: 10,
+    justifyContent: 'center',
   },
   photoButtonText: {
     color: '#fff',
+    marginLeft: 8,
     fontSize: 16,
-    fontWeight: 'bold',
-    marginLeft: 10,
   },
   imageContainer: {
-    flexDirection: 'row',
     marginBottom: 20,
   },
   imageWrapper: {
@@ -299,30 +369,23 @@ const styles = StyleSheet.create({
     marginRight: 10,
   },
   imagePreview: {
-    width: 100,
-    height: 100,
+    width: 120,
+    height: 120,
     borderRadius: 10,
   },
   removeButton: {
     position: 'absolute',
     top: 5,
     right: 5,
-    backgroundColor: 'rgba(0,0,0,0.6)',
+    backgroundColor: '#dc3545',
     borderRadius: 15,
-    width: 30,
-    height: 30,
-    justifyContent: 'center',
-    alignItems: 'center',
-    zIndex: 1,
+    padding: 5,
   },
   saveButton: {
     backgroundColor: '#007bff',
-    paddingVertical: 15,
-    paddingHorizontal: 20,
     borderRadius: 10,
+    padding: 15,
     alignItems: 'center',
-    height: 60,
-    justifyContent: 'center',
     marginBottom: 30,
   },
   saveButtonText: {

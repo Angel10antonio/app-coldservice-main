@@ -4,10 +4,11 @@ import { FontAwesome } from '@expo/vector-icons';
 import { TouchableOpacity, Alert, StyleSheet, View, Text } from 'react-native';
 import firebase from '../database/firebase'; // Asegúrate de que la ruta sea la correcta
 
+
 // Pantallas que quieres mostrar en las pestañas
-import MainHomeScreen from './MainHomeScreen'; // La vista que ya tenías en HomeScreen
+import MainHomeScreen from './MainHomeScreen'; 
 import ConfigScreen from './ConfigScreen';
-import MensajesScreen from './MensajesScreen'; 
+import MensajesScreen from './Chat'; 
 
 // Función para cerrar sesión con confirmación
 const handleLogout = (navigation) => {
@@ -45,6 +46,7 @@ export default function HomeTabs({ route, navigation }) {
   const { userRole } = route.params;
 
   return (
+    
     <Tab.Navigator>
       <Tab.Screen 
         name="Inicio" 
@@ -57,7 +59,7 @@ export default function HomeTabs({ route, navigation }) {
         }}
       />
       <Tab.Screen 
-        name="Mensajes" 
+        name="Mensaje" 
         component={MensajesScreen} 
         initialParams={{ userRole }}
         options={{
@@ -66,6 +68,7 @@ export default function HomeTabs({ route, navigation }) {
           ),
         }}
       />
+      
       <Tab.Screen 
         name="Configuración" 
         component={ConfigScreen} 

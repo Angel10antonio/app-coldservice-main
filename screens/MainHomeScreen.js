@@ -1,72 +1,100 @@
-import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Alert } from 'react-native';
+import React, { useState } from 'react';
+import { View, Text, TouchableOpacity, StyleSheet, ScrollView } from 'react-native';
 import { FontAwesome } from '@expo/vector-icons';
-import { auth } from '../database/firebase';
+//import FormularioIcon from '../assets/formularios.png';
+
 
 const HomeScreen = ({ navigation, route }) => {
-  const { userRole } = route.params; // Obtén el rol del usuario
+  const { userRole } = route.params;
 
-  const handleLogout = async () => {
-    try {
-      await auth.signOut();
-      navigation.replace('LoginScreen'); // Cierra sesión y redirige al LoginScreen
-    } catch (error) {
-      console.error('Error al cerrar sesión:', error);
-      Alert.alert('Error', 'No se pudo cerrar la sesión.');
-    }
+  const [activeIndex1, setActiveIndex1] = useState(0);
+  const [activeIndex2, setActiveIndex2] = useState(0);
+  const [activeIndex3, setActiveIndex3] = useState(0); // Nuevo estado para el tercer cuadro
+ 
+
+  const handleScroll1 = (event) => {
+    const contentOffsetX = event.nativeEvent.contentOffset.x;
+    const index = Math.floor(contentOffsetX / 120);
+    setActiveIndex1(index);
   };
 
-  const handleGoBack = () => {
-    navigation.navigate('LoginScreen'); // Regresa al LoginScreen sin cerrar sesión
+  const handleScroll2 = (event) => {
+    const contentOffsetX = event.nativeEvent.contentOffset.x;
+    const index = Math.floor(contentOffsetX / 120);
+    setActiveIndex2(index);
   };
+
+  const handleScroll3 = (event) => {
+    const contentOffsetX = event.nativeEvent.contentOffset.x;
+    const index = Math.floor(contentOffsetX / 120);
+    setActiveIndex3(index);
+  };
+
+ 
 
   return (
     <View style={styles.container}>
       <Text style={styles.header}>Cold Service</Text>
 
-     {/* Botón de Reportes (visible para todos) */}
-     <TouchableOpacity
-        style={styles.button}
-        onPress={() => navigation.navigate('ReportesScreen')}
-      >
-        <Text style={styles.buttonText}>Reportes</Text>
-      </TouchableOpacity>
+      <View style={styles.horizontalContainer}>
+        {/* Cuadro 1 */}
+        <View style={styles.squareButtonContainer}>
+          <ScrollView horizontal pagingEnabled showsHorizontalScrollIndicator={false} onScroll={handleScroll1}>
+            <TouchableOpacity style={styles.squareButton} onPress={() => navigation.navigate('ProcesoReparacionScreen')}>
+              <FontAwesome name="wrench" size={30} color="#fff" />
+              <Text style={styles.squareButtonText}>Reporte de Reparación</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.squareButton} onPress={() => navigation.navigate('ConsultarProcesoReparacionesScreen')}>
+              <FontAwesome name="search" size={24} color="#fff" />
+              <Text style={styles.squareButtonText}>Consultar Reparación</Text>
+            </TouchableOpacity>
+          </ScrollView>
+          <View style={styles.dotsContainer}>
+            <View style={[styles.dot, activeIndex1 === 0 ? styles.activeDot : styles.inactiveDot]} />
+            <View style={[styles.dot, activeIndex1 === 1 ? styles.activeDot : styles.inactiveDot]} />
+          </View>
+        </View>
 
-      {/* Botón de registros (visible para todos) */}
-      <TouchableOpacity
-        style={styles.button}
-        onPress={() => navigation.navigate('ConsultarReportesScreen', { userRole })}
-      >
-        <Text style={styles.buttonText}>Registros</Text>
-      </TouchableOpacity>
+        {/* Cuadro 2 */}
+        <View style={styles.squareButtonContainer}>
+          <ScrollView horizontal pagingEnabled showsHorizontalScrollIndicator={false} onScroll={handleScroll2}>
+            <TouchableOpacity style={styles.squareButton} onPress={() => navigation.navigate('ReportesScreen')}>
+              <FontAwesome name="file" size={30} color="#fff" />
+              <Text style={styles.squareButtonText}>Reportes</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.squareButton} onPress={() => navigation.navigate('ConsultarReportesScreen', { userRole })}>
+              <FontAwesome name="clipboard" size={24} color="#fff" />
+              <Text style={styles.squareButtonText}>Registros</Text>
+            </TouchableOpacity>
+          </ScrollView>
+          <View style={styles.dotsContainer}>
+            <View style={[styles.dot, activeIndex2 === 0 ? styles.activeDot : styles.inactiveDot]} />
+            <View style={[styles.dot, activeIndex2 === 1 ? styles.activeDot : styles.inactiveDot]} />
+          </View>
+        </View>
+        
 
-      {/* Contenedor de los botones cuadrados en una fila */}
-      <View style={styles.squareButtonContainer}>
-        {/* Botón cuadrado: Reporte de Reparación */}
-        <TouchableOpacity
-          style={[styles.squareButton, { marginRight: 30 }]} // Separar con margen a la derecha
-          onPress={() => navigation.navigate('ProcesoReparacionScreen')}
-        >
-          <FontAwesome name="wrench" size={30} color="#fff" />
-          <Text style={styles.squareButtonText}>Reporte de Reparación</Text>
-        </TouchableOpacity>
-
-        {/* Botón cuadrado: Consulta Reporte de Reparación */}
-        <TouchableOpacity
-          style={styles.squareButton }
-          onPress={() => navigation.navigate('ConsultarProcesoReparacionesScreen')}
-        >
-          <FontAwesome name="search" size={24} color="#fff" />
-          <Text style={styles.squareButtonText}>Consultar Reparación</Text>
-        </TouchableOpacity>
+         {/* Cuadro 3 - Reportar un Error */}
+         <View style={styles.squareButtonContainer}>
+          <ScrollView horizontal pagingEnabled showsHorizontalScrollIndicator={false} onScroll={handleScroll3}>
+            <TouchableOpacity style={styles.squareButton} onPress={() => navigation.navigate('ReportarErrorScreen')}>
+              <FontAwesome name="bug" size={40} color="#fff" />
+              <Text style={styles.squareButtonText}>Reportar Error</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.squareButton} onPress={() => navigation.navigate('ConsultarErroresScreen')}>
+              <FontAwesome name="exclamation-triangle" size={28} color="#fff" />
+              <Text style={styles.squareButtonText}>Consultar Errores</Text>
+            </TouchableOpacity>
+          </ScrollView>
+          <View style={styles.dotsContainer}>
+            <View style={[styles.dot, activeIndex3 === 0 ? styles.activeDot : styles.inactiveDot]} />
+            <View style={[styles.dot, activeIndex3 === 1 ? styles.activeDot : styles.inactiveDot]} />
+          </View>
+        </View>
       </View>
 
-      {/* Botón de Servicio (solo para admin) */}
       {userRole === 'admin' && (
-        <TouchableOpacity
-          style={styles.button}
-          onPress={() => navigation.navigate('UserList')}
-        >
+        <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('UserList')}>
           <Text style={styles.buttonText}>Servicio</Text>
         </TouchableOpacity>
       )}
@@ -101,31 +129,54 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: 'bold',
   },
-  // Estilo para los botones cuadrados en una fila
-  squareButtonContainer: {
+  horizontalContainer: {
     flexDirection: 'row',
+    flexWrap: 'wrap',
     justifyContent: 'space-between',
-    alignItems: 'center',
+    width: '100%',
+  },
+  squareButtonContainer: {
+    width: '48%',
+    height: 140,
+    backgroundColor: '#0303b5',
+    borderRadius: 10,
     marginBottom: 20,
-    width: '80%',
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 10,
   },
   squareButton: {
-    width: 150,
-    height: 150,
+    width: 120,
+    height: 100,
     backgroundColor: '#0303b5',
     borderRadius: 10,
     justifyContent: 'center',
     alignItems: 'center',
-    padding: 10,
-    marginHorizontal: -20, // Asegura que esté centrado en su contenedor
-    marginVertical: 10, // Ajusta la posición verticalmente si es necesario
+    marginHorizontal: 20,
   },
   squareButtonText: {
     marginTop: 10,
     color: '#fff',
-    fontSize: 16,
+    fontSize: 14,
     fontWeight: 'bold',
     textAlign: 'center',
+  },
+  dotsContainer: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    marginTop: 1,
+  },
+  dot: {
+    width: 10,
+    height: 10,
+    borderRadius: 5,
+    margin: 5,
+  },
+  activeDot: {
+    backgroundColor: '#fff',
+  },
+  inactiveDot: {
+    backgroundColor: '#aaa',
   },
 });
 

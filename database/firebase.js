@@ -4,6 +4,7 @@ import "firebase/compat/firestore"; // Importa Firestore
 import "firebase/compat/auth"; // Importa el módulo de autenticación
 import "firebase/compat/storage"; // Importa Firebase Storage
 
+
 // Configuración de Firebase
 const firebaseConfig = {
   apiKey: "AIzaSyCR5_A2WTF1YKlSNvFkMKVNXPzbefxEzDQ",
@@ -11,7 +12,8 @@ const firebaseConfig = {
   projectId: "appmovilcs",
   storageBucket: "appmovilcs.firebasestorage.app",
   messagingSenderId: "250369424023",
-  appId: "1:250369424023:web:75b223f565aa22aa0007d2"
+  appId: "1:250369424023:web:75b223f565aa22aa0007d2",
+  measurementId: 'your-measurement-id'
 };
 
 // Inicializa Firebase solo si no está ya inicializado

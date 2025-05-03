@@ -17,8 +17,11 @@ import ConsultarReportesScreen from './screens/ConsultarReportesScreen';
 import ConfigScreen from './screens/ConfigScreen';
 import ProcesoReparacionScreen from './screens/ProcesoReparacionScreen';
 import ConsultarProcesoReparacionesScreen from './screens/ConsultarProcesoReparacionesScreen'; // Agrega la importación
+import ReportarErrorScreen from './screens/ReportarErrorScreen'; // ajusta el path si es necesario
+import ConsultarErroresScreen from './screens/ConsultarErrores';
 
-
+import Chat from './screens/Chat'; // tu segunda pantalla (la de chat)
+import ChatRoom from './screens/ChatRoom';
 // Crea el navegador de pila
 const Stack = createNativeStackNavigator();
 
@@ -96,6 +99,31 @@ function MyStack() {
     component={ConsultarProcesoReparacionesScreen}
     options={{ title: 'Consultar Reportes de Reparación' }}
   />
+
+  {/* Pantalla de Reportar Error */}
+  <Stack.Screen
+    name="ReportarErrorScreen"
+    component={ReportarErrorScreen}
+    options={{ title: 'Reportar Error' }}
+  />
+  {/* Pantalla de CONULTAR Error */}
+  <Stack.Screen
+    name="ConsultarErroresScreen"
+    component={ConsultarErroresScreen}
+    options={{ title: 'Consultar Errores' }}
+  />
+  {/* Pantalla de CHAT */}
+   <Stack.Screen
+    name="Chat"
+    component={Chat}
+    options={{ title: 'Chat' }}
+  />
+  <Stack.Screen
+  name="ChatRoom"
+  component={ChatRoom}
+  options={{ title: 'Sala de Chat' }}
+/>
+  
 </Stack.Navigator>
 
     </ThemeProvider>

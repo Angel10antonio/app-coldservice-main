@@ -5,12 +5,16 @@ import {
   TextInput,
   StyleSheet,
   ScrollView,
-  Alert,
+  Alert,  // Mantén esta importación
   TouchableOpacity,
+  Modal,
+  Image,
+  ActivityIndicator
 } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import firebase from '../database/firebase';
-
+import Signature from 'react-native-signature-canvas';  // Asegúrate de tener esta importación
+import Icon from 'react-native-vector-icons/MaterialIcons';  // Para el icono en el botón
 const { db } = firebase;
 
 const CapturaProcesoReparacionScreen = () => {
@@ -49,6 +53,8 @@ const CapturaProcesoReparacionScreen = () => {
   const [descripcionDiagnostico, setDescripcionDiagnostico] = useState('');
   const [motivoCarga, setMotivoCarga] = useState([]);
   const [otroMotivo, setOtroMotivo] = useState('');  // Aquí defines el setter correctamente
+  const [signature, setSignature] = useState(null);
+    const [showSignatureModal, setShowSignatureModal] = useState(false);  // Para controlar el modal de firma
   
 
   const handlePress = (option) => {
@@ -94,6 +100,12 @@ const CapturaProcesoReparacionScreen = () => {
 
   const [comentariosAdicionales, setComentariosAdicionales] = useState('');
 
+  const handleSignature = (sig) => {
+    if (sig) {
+      setSignature(sig);  // Guardamos la firma
+      setShowSignatureModal(false);  // Cerramos el modal de firma
+    }
+  };
 
   const handleSubmit = async () => {
     if (
@@ -134,8 +146,13 @@ const CapturaProcesoReparacionScreen = () => {
       return;
     }
 
+    if (!signature) {
+      Alert.alert('Error', 'Por favor, firma antes de guardar.');
+      return;
+    }
+
        // Verificar el contenido de los materiales antes de enviarlos a Firebase
-       console.log('Materiales:', materiales);
+       //console.log('Materiales:', materiales);
 
     try {
       setLoading(true);
@@ -150,7 +167,7 @@ const CapturaProcesoReparacionScreen = () => {
         hora_salida: horaSalida.toISOString(),
         hora_arribo: horaArribo.toISOString(),
         hora_terminacion: horaTerminacion.toISOString(),
-        prestador: 'COLD SERVICE REFRIGERATION, SA DE C.V. (Luis Torres)',
+        prestador: 'COLD SERVICE REFRIGERATION, SA DE C.V. (Héctor Espinoza)',
         reporte,
         ruta,
         cuadrilla,
@@ -173,6 +190,7 @@ const CapturaProcesoReparacionScreen = () => {
           cantidad: material.cantidad,
           unidad: material.unidad,
         })),
+        firma: signature, // <-- Asegúrate de guardar la firma aquí
       });
       Alert.alert('Éxito', 'Proceso de reparación guardado con éxito.');
       // Limpiar los campos después de guardar
@@ -203,6 +221,7 @@ const CapturaProcesoReparacionScreen = () => {
       setMateriales([{ concepto: '', cantidad: '', unidad: '' }]);  // Limpiar los materiales
       setTrabajoPendiente('');
       setComentariosAdicionales(''); // Limpiar "Comentarios Adicionales"
+      setSignature(null);
     } catch (error) {
       console.error('Error al guardar datos:', error);
       Alert.alert(
@@ -449,7 +468,7 @@ const CapturaProcesoReparacionScreen = () => {
         onChangeText={setReportadaPor}
         placeholder="Ingrese quien reportó"
       />
-      <View style={styles.divider}></View>
+      
       <Text style={styles.reportTitle}>DESCRIPCION DEL DIAGNOSTICO AL REVISAR</Text>
       {/* Descripción Diagnóstico */}
         <Text style={styles.label}>Descripción Diagnóstico:</Text>
@@ -527,12 +546,12 @@ const CapturaProcesoReparacionScreen = () => {
 
           {/* Motivo de la carga */}
           <View style={{ padding: 20 }}>
-      <Text style={styles.label}>Motivo de la carga:</Text>
-      <View style={styles.optionsContainer}>
-        <TouchableOpacity
-          style={[styles.optionButton, motivoCarga.includes('Cambio de Compresores') && styles.selectedButton]}
-          onPress={() => handlePress('Cambio de Compresores')}
-        >
+            <Text style={styles.label}>Motivo de la carga:</Text>
+            <View style={styles.optionsContainer}>
+          <TouchableOpacity
+              style={[styles.optionButton, motivoCarga.includes('Cambio de Compresores') && styles.selectedButton]}
+              onPress={() => handlePress('Cambio de Compresores')}
+          >
           <Text style={[styles.optionButtonText, motivoCarga.includes('Cambio de Compresores') && styles.selectedButtonText]}>
             Cambio de Compresores
           </Text>
@@ -555,26 +574,28 @@ const CapturaProcesoReparacionScreen = () => {
             Calibración
           </Text>
         </TouchableOpacity>
-
+        
         <TouchableOpacity
-  style={[styles.optionButton, motivoCarga.includes('Otro') && styles.selectedButton]}
-  onPress={() => handlePress('Otro')}
->
-  <Text style={[styles.optionButtonText, motivoCarga.includes('Otro') && styles.selectedButtonText]}>
-    Otro (Especifique)
-  </Text>
-</TouchableOpacity>
+          style={[styles.optionButton, motivoCarga.includes('Otro') && styles.selectedButton]}
+          onPress={() => handlePress('Otro')}
+        >
+          <Text style={[styles.optionButtonText, motivoCarga.includes('Otro') && styles.selectedButtonText]}>
+            Otro (Especifique)
+          </Text>
+        </TouchableOpacity>
 
-{motivoCarga.includes('Otro') && (
-  <TextInput
-    style={[styles.input, { marginTop: 10 }]}
-    placeholder="Especifique el motivo"
-    value={otroMotivo}
-    onChangeText={setOtroMotivo}
-  />
-)}
+          {motivoCarga.includes('Otro') && (
+            <TextInput
+              style={[styles.input, { marginTop: 10 }]}
+              placeholder="Especifique el motivo"
+              value={otroMotivo}
+              onChangeText={setOtroMotivo}
+            />
+          )}
       </View>
     </View>
+    <View style={styles.divider}></View>
+
 
         <Text style={styles.reportTitle}>MATERIALES UTILIZADOS</Text>
         {materiales.map((material, index) => (
@@ -602,9 +623,9 @@ const CapturaProcesoReparacionScreen = () => {
       </View>
       ))}
 
-<TouchableOpacity style={styles.addButton} onPress={agregarMaterial}>
-  <Text style={styles.addButtonText}>+ Agregar Material</Text>
-</TouchableOpacity>
+      <TouchableOpacity style={styles.addButton} onPress={agregarMaterial}>
+        <Text style={styles.addButtonText}>+ Agregar Material</Text>
+      </TouchableOpacity>
 
 
 
@@ -618,7 +639,7 @@ const CapturaProcesoReparacionScreen = () => {
         numberOfLines={5} // Ajusta el número de líneas según el espacio que desees
       />
 
-<View>
+      <View>
   
       <Text style={styles.reportTitle}>FECHA PROGRAMADA</Text>
       <Text style={styles.label}>Fecha Programada:</Text>
@@ -650,11 +671,6 @@ const CapturaProcesoReparacionScreen = () => {
       )}
     </View>
   
-
-
-
-
-
     <Text style={styles.reportTitle}>COMENTARIOS ADICIONALES</Text>
     {/* Comentarios adicionales */}
         <Text style={styles.label}>Comentarios Adicionales:</Text>
@@ -667,16 +683,76 @@ const CapturaProcesoReparacionScreen = () => {
           numberOfLines={5}
         />
 
+     
+        {/* Mostrar la firma en el formulario */}
+      {signature && (
+        <View style={{ alignItems: 'center', marginBottom: 20 }}>
+          <Text style={styles.label}>Firma</Text>
+          <Image
+            source={{ uri: signature }}
+            style={{ width: 350, height: 220, borderWidth: 1, borderColor: '#ccc' }}
+          />
+        </View>
+      )}
+
+      {/* Botón para abrir el modal de firma */}
+      <TouchableOpacity
+        style={[styles.photoButton, { backgroundColor: '#b7001f' }]}
+        onPress={() => setShowSignatureModal(true)}
+      >
+        <Icon name="edit" size={20} color="#fff" />
+        <Text style={styles.photoButtonText}>Firmar</Text>
+      </TouchableOpacity>
+
       {loading ? (
-        <Text style={styles.loadingText}>Guardando...</Text>
+        <ActivityIndicator size="large" color="#007bff" />
       ) : (
         <TouchableOpacity style={styles.saveButton} onPress={handleSubmit}>
-          <Text style={styles.saveButtonText}>Guardar</Text>
+          <Text style={styles.saveButtonText}>Guardar Reporte</Text>
         </TouchableOpacity>
+        
       )}
+      <View style={{ height: 60 }} />
+
+      {/* Modal de Firma */}
+<Modal visible={showSignatureModal} animationType="slide">
+  <View style={{ flex: 1 }}>
+    <Signature
+      onOK={handleSignature}
+      onEmpty={() => Alert.alert("Firma vacía")}
+      onClear={() => console.log("clear")}
+      onEnd={() => console.log("end")}
+      descriptionText="Firma aquí"
+      clearText="Limpiar"
+      confirmText="Guardar"
+      // Elimina webStyle si no es necesario o ajústalo
+      webStyle={`
+        .m-signature-pad--footer { 
+          display: flex;
+          justify-content: space-between;
+          padding: 10px;
+        }
+        .m-signature-pad--footer button {
+          background-color: #007bff;
+          color: #fff;
+          padding: 10px;
+          border: none;
+          border-radius: 5px;
+        }
+      `}
+    />
+    <TouchableOpacity
+      style={[styles.saveButton, { backgroundColor: '#dc3545', marginTop: 1 }]}
+      onPress={() => setShowSignatureModal(false)}
+    >
+      <Text style={styles.saveButtonText}>Cancelar</Text>
+    </TouchableOpacity>
+  </View>
+</Modal>
     </ScrollView>
   );
 };
+  
 
 
 const styles = StyleSheet.create({
@@ -692,6 +768,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     color: '#333',
   },
+ 
   label: {
     fontSize: 16,
     fontWeight: 'bold',
@@ -819,7 +896,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   selectedButton: {
-    backgroundColor: 'green',
+    backgroundColor: '#28a745',
   },
   selectedButtonText: {
     color: '#fff',
@@ -860,6 +937,20 @@ const styles = StyleSheet.create({
   addButtonText: {
     color: '#fff',
     fontWeight: 'bold',
+  },
+  photoButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#28a745',
+    borderRadius: 10,
+    padding: 12,
+    marginBottom: 10,
+    justifyContent: 'center',
+  },
+  photoButtonText: {
+    color: '#fff',
+    marginLeft: 8,
+    fontSize: 16,
   },
 });
 
