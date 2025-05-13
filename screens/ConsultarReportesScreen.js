@@ -108,15 +108,26 @@ const ConsultarReportesScreen = ({ route }) => {
               </View>
             )}
 
-            {reporte.fotos?.length > 0 && (
-              <ScrollView horizontal style={styles.imageContainer}>
-                {reporte.fotos.map((foto, index) => (
-                  <TouchableOpacity key={index} onPress={() => openImageModal(foto)}>
-                    <Image source={{ uri: foto }} style={styles.imagePreview} />
-                  </TouchableOpacity>
-                ))}
-              </ScrollView>
-            )}
+          {reporte.fotos?.length > 0 && (
+            <ScrollView horizontal style={styles.imageContainer}>
+              {reporte.fotos.map((foto, index) => (
+                <TouchableOpacity key={index} onPress={() => openImageModal(foto)}>
+                  <Image source={{ uri: foto }} style={styles.imagePreview} />
+                </TouchableOpacity>
+              ))}
+            </ScrollView>
+          )}
+
+          {/* Modal para imagen ampliada */}
+          <Modal visible={modalVisible} transparent animationType="fade">
+            <View style={styles.modalContainer}>
+              <Pressable style={styles.modalCloseArea} onPress={() => setModalVisible(false)} />
+              <Image source={{ uri: selectedImage }} style={styles.fullImage} resizeMode="contain" />
+              <TouchableOpacity style={styles.modalCloseButton} onPress={() => setModalVisible(false)}>
+                <Icon name="close" size={30} color="#000" />
+              </TouchableOpacity>
+            </View>
+          </Modal>
 
             {userRole === 'admin' && (
               <TouchableOpacity

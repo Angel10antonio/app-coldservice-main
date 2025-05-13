@@ -105,30 +105,48 @@ const ConsultarProcesoReparacionScreen = () => {
 
               <View style={styles.divider} />
 
-              <Text style={styles.label}>Hora de Reporte: {new Date(item.hora).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</Text>
-              <Text style={styles.label}>Hora de Salida: {new Date(item.hora_salida).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</Text>
-              <Text style={styles.label}>Hora de Arribo a la Tienda: {new Date(item.hora_arribo).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</Text>
+              <Text style={styles.label}>Hora de Reporte: {horaFormateada}</Text>
+              <Text style={styles.label}>Hora de Salida: {horaSalidaFormateada}</Text>
+              <Text style={styles.label}>Hora de Arribo a la Tienda: {horaArriboFormateada}</Text>
               <Text style={styles.label}>Fecha de Terminación: {fechaTerminacionFormateada}</Text>
-              <Text style={styles.label}>Hora de Terminación: {new Date(item.hora_terminacion).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</Text>
+              <Text style={styles.label}>Hora de Terminación: {horaTerminacionFormateada}</Text>
               <View style={styles.divider} />
               <Text style={styles.title1}>Reporte de falla</Text>
               <Text style={styles.label}>Falla Reportada: {item.falla_reportada || 'No especificado'}</Text>
               <Text style={styles.label}>Reportada Por: {item.reportada_por || 'No especificado'}</Text>
-              {item.firma && (
-                <View style={styles.firmaContainer}>
-                  <Text style={styles.firmaLabel}>Firma:</Text>
-                  <TouchableOpacity onPress={() => {
-                    setSelectedSignature(item.firma);
-                    setSelectedImage(null);
-                    setModalVisible(true);
-                  }}>
-                    <Image source={{ uri: item.firma }} style={styles.firmaImage} />
-                  </TouchableOpacity>
-                </View>
-              )}
+              
               <View style={styles.divider} />
               <Text style={styles.title1}>Descripción diagnostico al revisar</Text>
               <Text style={styles.label}>Descripción Diagnóstico: {item.descripcion_diagnostico || 'No especificado'}</Text>
+              <View style={styles.divider} />
+              {/* Aquí las imágenes */}
+                <Text style={styles.title1}>Imagenes de las piezas</Text>
+                {item.fotos && item.fotos.length > 0 ? (
+                  <ScrollView horizontal style={styles.imageContainer}>
+                    {item.fotos.map((foto, index) => (
+                      <TouchableOpacity key={index} onPress={() => {
+                        setSelectedImage(foto); // Establecer la imagen seleccionada
+                        setModalVisible(true); // Abrir el modal
+                      }}>
+                        <Image source={{ uri: foto }} style={styles.imagePreview} />
+                      </TouchableOpacity>
+                    ))}
+                  </ScrollView>
+                ) : (
+                  <Text style={styles.label}>No hay imágenes disponibles</Text>
+                )}
+
+              {/* Modal para imagen o firma ampliada */}
+              <Modal visible={modalVisible} transparent animationType="fade">
+                <View style={styles.modalContainer}>
+                  <Pressable style={styles.modalCloseArea} onPress={() => setModalVisible(false)} />
+                  <Image source={{ uri: selectedImage || selectedSignature }} style={styles.fullImage} resizeMode="contain" />
+                  <TouchableOpacity style={styles.modalCloseButton} onPress={() => setModalVisible(false)}>
+                    <Icon name="close" size={30} color="#000" />
+                  </TouchableOpacity>
+                </View>
+              </Modal>
+              
               <View style={styles.divider} />
               <Text style={styles.title1}>Descripción del equipo</Text>
               <Text style={styles.label}>Marca: {item.marca || 'No especificado'}</Text>
@@ -146,23 +164,27 @@ const ConsultarProcesoReparacionScreen = () => {
               <View style={styles.divider} />
               <Text style={styles.title1}>Materiales utilizados</Text>
               {item.materiales && item.materiales.length > 0 ? (item.materiales.map((material, index) => (
-              <View key={index}>
-                <Text style={styles.label}>Concepto: {material.concepto || 'No especificado'}</Text>
-                <Text style={styles.label}>Cantidad: {material.cantidad || 'No especificado'}</Text>
-                <Text style={styles.label}>Unidad: {material.unidad || 'No especificado'}</Text>
-              </View>
-                ))
+                <View key={index}>
+                  <Text style={styles.label}>Concepto: {material.concepto || 'No especificado'}</Text>
+                  <Text style={styles.label}>Cantidad: {material.cantidad || 'No especificado'}</Text>
+                  <Text style={styles.label}>Unidad: {material.unidad || 'No especificado'}</Text>
+                </View>
+              ))
               ) : (
                 <Text style={styles.label}>No hay materiales disponibles</Text>
               )}
               <View style={styles.divider} />
               <Text style={styles.label}>Trabajos pendientes: {item.trabajo_pendiente|| 'Sin trabajos pendientes'}</Text>
               <Text style={styles.label}>Fecha Programada: {item.fecha_programada ? new Date(item.fecha_programada.toDate()).toLocaleDateString() : 'No especificado'}</Text>
+              <Text style={styles.label}>Comentarios Adicionales: {item.trabajo_pendiente|| 'Sin comentarios adicionales'}</Text>
 
               <View style={styles.divider} />
+              
+
               {/* Modal para imagen o firma ampliada */}
               <Modal visible={modalVisible} transparent animationType="fade">
                 <View style={styles.modalContainer}>
+                  
                   <Pressable style={styles.modalCloseArea} onPress={() => setModalVisible(false)} />
                   <Image source={{ uri: selectedImage || selectedSignature }} style={styles.fullImage} resizeMode="contain" />
                   <TouchableOpacity style={styles.modalCloseButton} onPress={() => setModalVisible(false)}>
@@ -170,7 +192,28 @@ const ConsultarProcesoReparacionScreen = () => {
                   </TouchableOpacity>
                 </View>
               </Modal>
-              <Text style={styles.label}>Comentarios Adicionales: {item.comentarios_adicionales ? item.comentarios_adicionales : 'Sin comentarios adicionales'}</Text>
+
+              {/* Mostrar la firma si existe */}
+              {item.firma && (
+                <View style={styles.firmaContainer}>
+                  <Text style={styles.firmaLabel}>Firma:</Text>
+                  
+                  <TouchableOpacity onPress={() => {
+                    setSelectedSignature(item.firma);
+                    setSelectedImage(null);
+                    setModalVisible(true);
+                  }}>
+                    <Image source={{ uri: item.firma }} style={styles.firmaImage} />
+                  </TouchableOpacity>
+
+                  {/* Línea encima del nombre */}
+                  <View style={styles.lineaFirma} />
+
+                  {/* Nombre del firmante debajo de la línea */}
+                  <Text style={styles.nombreFirmante}>{item.nombre_firmante || 'Nombre no registrado'}</Text>
+                </View>
+              )}
+
 
               {/* ESPACIADOR FINAL AÑADIDO */}
               <View style={{ height: 5 }} />
@@ -181,7 +224,6 @@ const ConsultarProcesoReparacionScreen = () => {
     </ScrollView>
   );
 };
-
 
 const styles = StyleSheet.create({
   container: {
@@ -243,8 +285,8 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   firmaImage: {
-    width: 200,
-    height: 100,
+    width: 280,
+    height: 160,
     borderRadius: 10,
   },
   modalContainer: {
@@ -272,6 +314,27 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     padding: 10,
     borderRadius: 30,
+  },
+  lineaFirma: {
+    width: '80%',  // Ajusta el tamaño de la línea según sea necesario
+    height: 3,
+    backgroundColor: 'black',  // Color de la línea
+    marginBottom: 10,  // Espacio entre la línea y el nombre
+  },
+  imageContainer: {
+    marginVertical: 10,
+    flexDirection: 'row',
+  },
+  imagePreview: {
+    width: 100,
+    height: 100,
+    borderRadius: 8,
+    marginRight: 10,
+  },
+  fullImage: {
+    width: '90%',
+    height: '80%',
+    borderRadius: 10,
   },
 });
 

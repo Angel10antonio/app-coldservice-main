@@ -82,7 +82,7 @@ const ReportarErrorScreen = () => {
           onChangeText={setUsuario}
         />
   
-        <Text style={styles.label}>Pantalla</Text>
+        <Text style={styles.label}>Pantalla de error</Text>
         <TextInput
           style={styles.input}
           value={pantalla}
@@ -109,7 +109,7 @@ const ReportarErrorScreen = () => {
         <Text style={styles.selectedDateText}>
           Fecha seleccionada: {fecha.toLocaleDateString()}
         </Text>
-  
+        <View style={{ height: 30 }} />
         <TouchableOpacity style={styles.saveButton} onPress={handleSubmit}>
           <Text style={styles.saveButtonText}>Enviar Reporte</Text>
         </TouchableOpacity>

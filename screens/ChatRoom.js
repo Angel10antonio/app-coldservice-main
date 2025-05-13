@@ -177,7 +177,9 @@ export default function ChatRoom({ route }) {
         <TouchableOpacity onPress={sendMessage} style={styles.sendButton}>
           <FontAwesome name="send" size={20} color="#fff" />
         </TouchableOpacity>
+        
       </View>
+      <View style={{ height: 23 }} />
     </View>
   );
 }

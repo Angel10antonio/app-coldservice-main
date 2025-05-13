@@ -19,9 +19,14 @@ import ProcesoReparacionScreen from './screens/ProcesoReparacionScreen';
 import ConsultarProcesoReparacionesScreen from './screens/ConsultarProcesoReparacionesScreen'; // Agrega la importación
 import ReportarErrorScreen from './screens/ReportarErrorScreen'; // ajusta el path si es necesario
 import ConsultarErroresScreen from './screens/ConsultarErrores';
-
 import Chat from './screens/Chat'; // tu segunda pantalla (la de chat)
 import ChatRoom from './screens/ChatRoom';
+import EquipoConfiguradoScreen from './screens/EquipoConfiguradoScreen';
+import ConsultarEquiposConfiguradosScreen from './screens/ConsultarEquiposConfiguradosScreen';
+import CostoReparacionesScreen from './screens/CostoReparacionesScreen';
+
+
+
 // Crea el navegador de pila
 const Stack = createNativeStackNavigator();
 
@@ -29,23 +34,22 @@ const Stack = createNativeStackNavigator();
 // Define la pila de navegación
 function MyStack() {
   return (
-    <ThemeProvider>
-      <Stack.Navigator>
+   <Stack.Navigator initialRouteName="LoginScreen">
   {/* Pantalla de inicio de sesión */}
   <Stack.Screen
     name="LoginScreen"
     component={LoginScreen}
-    options={{ headerShown: false }} // Oculta el header en LoginScreen
+    options={{ headerShown: false }}
   />
 
   {/* Pantalla principal */}
   <Stack.Screen
     name="HomeScreen"
-    component={HomeTabs} // ahora usa el Bottom Tabs
+    component={HomeTabs}
     options={{ headerShown: false }}
   />
-  
-  {/* Otras pantallas */}
+
+  {/* Pantallas de gestión de usuarios */}
   <Stack.Screen
     name="UserList"
     component={UserList}
@@ -61,6 +65,8 @@ function MyStack() {
     component={UserDetailScreen}
     options={{ title: 'Detalle del Usuario' }}
   />
+
+  {/* Pantallas de reportes */}
   <Stack.Screen
     name="ReportesScreen"
     component={ReportesScreen}
@@ -71,10 +77,8 @@ function MyStack() {
     component={ConsultarReportesScreen}
     options={{ title: 'Consultar Reportes' }}
   />
-
-  {/* Nueva pantalla de reporte de viáticos */}
   <Stack.Screen
-    name="ReporteViaticosScreen" // Registra la pantalla de reporte de viáticos
+    name="ReporteViaticosScreen"
     component={ReporteViaticosScreen}
     options={{ title: 'Reporte de Viáticos' }}
   />
@@ -86,47 +90,60 @@ function MyStack() {
     options={{ title: 'Configuración' }}
   />
 
-  {/* Pantalla de PROCESO DE REPARACION */}
-  <Stack.Screen 
+  {/* Pantallas de Proceso de Reparación */}
+  <Stack.Screen
     name="ProcesoReparacionScreen"
     component={ProcesoReparacionScreen}
     options={{ title: 'Proceso de Reparación' }}
   />
-
-  {/* Pantalla de CONSULTAR PROCESO DE REPARACION */}
   <Stack.Screen
     name="ConsultarProcesoReparacionesScreen"
     component={ConsultarProcesoReparacionesScreen}
     options={{ title: 'Consultar Reportes de Reparación' }}
   />
 
-  {/* Pantalla de Reportar Error */}
+  {/* Pantallas de errores */}
   <Stack.Screen
     name="ReportarErrorScreen"
     component={ReportarErrorScreen}
     options={{ title: 'Reportar Error' }}
   />
-  {/* Pantalla de CONULTAR Error */}
   <Stack.Screen
     name="ConsultarErroresScreen"
     component={ConsultarErroresScreen}
     options={{ title: 'Consultar Errores' }}
   />
-  {/* Pantalla de CHAT */}
-   <Stack.Screen
+
+  {/* Pantallas de chat */}
+  <Stack.Screen
     name="Chat"
     component={Chat}
     options={{ title: 'Chat' }}
   />
   <Stack.Screen
-  name="ChatRoom"
-  component={ChatRoom}
-  options={{ title: 'Sala de Chat' }}
-/>
-  
+    name="ChatRoom"
+    component={ChatRoom}
+    options={{ title: 'Sala de Chat' }}
+  />
+
+  {/* Pantallas de equipos configurados */}
+  <Stack.Screen
+    name="EquipoConfiguradoScreen"
+    component={EquipoConfiguradoScreen}
+    options={{ title: 'Equipo configurado' }}
+  />
+  <Stack.Screen
+    name="ConsultarEquiposConfiguradosScreen"
+    component={ConsultarEquiposConfiguradosScreen}
+    options={{ title: 'Ver Equipos Configurados' }}
+  />
+  <Stack.Screen
+    name="CostoReparacionesScreen"
+    component={CostoReparacionesScreen}
+    options={{ title: 'Costo Reparación' }}
+  />
 </Stack.Navigator>
 
-    </ThemeProvider>
   );
 }
 

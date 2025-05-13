@@ -69,7 +69,7 @@ class Main extends React.Component {
 
     return (
       <View style={styles.container}>
-        <Text style={styles.title}>Elige con quién deseas chatear</Text>
+        <Text style={styles.title}>Selecciona chat</Text>
 
         {/* Lista de contactos (Solo el chat con el admin si eres usuario y viceversa) */}
         <ScrollView style={styles.contactList}>
