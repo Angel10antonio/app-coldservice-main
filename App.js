@@ -26,7 +26,6 @@ import ConsultarEquiposConfiguradosScreen from './screens/ConsultarEquiposConfig
 import CostoReparacionesScreen from './screens/CostoReparacionesScreen';
 
 
-
 // Crea el navegador de pila
 const Stack = createNativeStackNavigator();
 

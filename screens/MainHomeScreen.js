@@ -9,37 +9,34 @@ const HomeScreen = ({ navigation, route }) => {
   const [activeIndex2, setActiveIndex2] = useState(0);
   const [activeIndex3, setActiveIndex3] = useState(0);
   const [activeIndex4, setActiveIndex4] = useState(0);
+  const [activeIndex5, setActiveIndex5] = useState(0);
 
 
   const handleScroll1 = (event) => {
-    const contentOffsetX = event.nativeEvent.contentOffset.x;
-    const index = Math.floor(contentOffsetX / 60);
+    const index = Math.floor(event.nativeEvent.contentOffset.x / 60);
     setActiveIndex1(index);
   };
 
   const handleScroll2 = (event) => {
-    const contentOffsetX = event.nativeEvent.contentOffset.x;
-    const index = Math.floor(contentOffsetX / 60);
+    const index = Math.floor(event.nativeEvent.contentOffset.x / 60);
     setActiveIndex2(index);
   };
 
   const handleScroll3 = (event) => {
-    const contentOffsetX = event.nativeEvent.contentOffset.x;
-    const index = Math.floor(contentOffsetX / 60);
+    const index = Math.floor(event.nativeEvent.contentOffset.x / 60);
     setActiveIndex3(index);
   };
 
   const handleScroll4 = (event) => {
-    const contentOffsetX = event.nativeEvent.contentOffset.x;
-    const index = Math.floor(contentOffsetX / 60);
+    const index = Math.floor(event.nativeEvent.contentOffset.x / 60);
     setActiveIndex4(index);
   };
-
   const handleScroll5 = (event) => {
-  const contentOffsetX = event.nativeEvent.contentOffset.x;
-  const index = Math.floor(contentOffsetX / 60);
-  setActiveIndex5(index);
-};
+    const index = Math.floor(event.nativeEvent.contentOffset.x / 60);
+    setActiveIndex5(index);
+  };
+
+
 
   return (
     <View style={styles.container}>
@@ -47,7 +44,7 @@ const HomeScreen = ({ navigation, route }) => {
 
       {/* Fila superior con 3 cuadros */}
       <View style={styles.horizontalContainer}>
-        {/* Cuadro 1 */}
+        {/* Cuadro 1 - Reparación */}
         <View style={styles.squareButtonContainer}>
           <ScrollView horizontal pagingEnabled showsHorizontalScrollIndicator={false} onScroll={handleScroll1}>
             <TouchableOpacity style={styles.squareButton} onPress={() => navigation.navigate('ProcesoReparacionScreen')}>
@@ -65,16 +62,16 @@ const HomeScreen = ({ navigation, route }) => {
           </View>
         </View>
 
-        {/* Cuadro 2 */}
+        {/* Cuadro 2 - Costos (subido) */}
         <View style={styles.squareButtonContainer}>
           <ScrollView horizontal pagingEnabled showsHorizontalScrollIndicator={false} onScroll={handleScroll2}>
-            <TouchableOpacity style={styles.squareButton} onPress={() => navigation.navigate('ReportarErrorScreen')}>
-              <FontAwesome name="bug" size={40} color="#fff" />
-              <Text style={styles.squareButtonText}>Reportar Error</Text>
+            <TouchableOpacity style={styles.squareButton} onPress={() => navigation.navigate('CostoReparacionesScreen')}>
+              <FontAwesome name="dollar" size={30} color="#fff" />
+              <Text style={styles.squareButtonText}>Costo Reparaciones</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.squareButton} onPress={() => navigation.navigate('ConsultarErroresScreen')}>
-              <FontAwesome name="exclamation-triangle" size={28} color="#fff" />
-              <Text style={styles.squareButtonText}>Consultar Errores</Text>
+            <TouchableOpacity style={styles.squareButton} onPress={() => navigation.navigate('ConsultarCostoReparacionScreen')}>
+              <FontAwesome name="list" size={24} color="#fff" />
+              <Text style={styles.squareButtonText}>Consultar Costos</Text>
             </TouchableOpacity>
           </ScrollView>
           <View style={styles.dotsContainer}>
@@ -83,7 +80,7 @@ const HomeScreen = ({ navigation, route }) => {
           </View>
         </View>
 
-        {/* Cuadro 3 */}
+        {/* Cuadro 3 - Equipos */}
         <View style={styles.squareButtonContainer}>
           <ScrollView horizontal pagingEnabled showsHorizontalScrollIndicator={false} onScroll={handleScroll3}>
             <TouchableOpacity style={styles.squareButton} onPress={() => navigation.navigate('EquipoConfiguradoScreen')}>
@@ -102,26 +99,43 @@ const HomeScreen = ({ navigation, route }) => {
         </View>
       </View>
 
-      {/* Fila inferior - Cuadro 4 */}
-      <View style={styles.bottomContainer}>
-        <View style={styles.squareButtonContainer}>
-          <ScrollView horizontal pagingEnabled showsHorizontalScrollIndicator={false} onScroll={handleScroll4}>
-            <TouchableOpacity style={styles.squareButton} onPress={() => navigation.navigate('CostoReparacionesScreen')}>
-              <FontAwesome name="dollar" size={30} color="#fff" />
-              <Text style={styles.squareButtonText}>Costo Reparaciones</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.squareButton} onPress={() => navigation.navigate('ConsultarCostoReparacionScreen')}>
-              <FontAwesome name="list" size={24} color="#fff" />
-              <Text style={styles.squareButtonText}>Consultar Costos</Text>
-            </TouchableOpacity>
-          </ScrollView>
-          <View style={styles.dotsContainer}>
-            <View style={[styles.dot, activeIndex4 === 0 ? styles.activeDot : styles.inactiveDot]} />
-            <View style={[styles.dot, activeIndex4 === 1 ? styles.activeDot : styles.inactiveDot]} />
-          </View>
+      {/* Cuadro 4 - Reportar Error (movido abajo) */}
+      <View style={styles.squareButtonContainer}>
+        <ScrollView horizontal pagingEnabled showsHorizontalScrollIndicator={false} onScroll={handleScroll4}>
+          <TouchableOpacity style={styles.squareButton} onPress={() => navigation.navigate('ReportarErrorScreen')}>
+            <FontAwesome name="bug" size={40} color="#fff" />
+            <Text style={styles.squareButtonText}>Reportar Error</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.squareButton} onPress={() => navigation.navigate('ConsultarErroresScreen')}>
+            <FontAwesome name="exclamation-triangle" size={28} color="#fff" />
+            <Text style={styles.squareButtonText}>Consultar Errores</Text>
+          </TouchableOpacity>
+        </ScrollView>
+        <View style={styles.dotsContainer}>
+          <View style={[styles.dot, activeIndex4 === 0 ? styles.activeDot : styles.inactiveDot]} />
+          <View style={[styles.dot, activeIndex4 === 1 ? styles.activeDot : styles.inactiveDot]} />
         </View>
       </View>
-      
+
+      {/* Cuadro 5 - Reportar Error (movido abajo) */}
+      <View style={styles.squareButtonContainer}>
+        <ScrollView horizontal pagingEnabled showsHorizontalScrollIndicator={false} onScroll={handleScroll5}>
+          <TouchableOpacity style={styles.squareButton} onPress={() => navigation.navigate('RegistroViaticosScreen')}>
+            <FontAwesome name="bug" size={40} color="#fff" />
+            <Text style={styles.squareButtonText}>Licencia Tecnicos</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.squareButton} onPress={() => navigation.navigate('')}>
+            <FontAwesome name="exclamation-triangle" size={28} color="#fff" />
+            <Text style={styles.squareButtonText}>Consultar Licencia</Text>
+          </TouchableOpacity>
+        </ScrollView>
+        <View style={styles.dotsContainer}>
+          <View style={[styles.dot, activeIndex5 === 0 ? styles.activeDot : styles.inactiveDot]} />
+          <View style={[styles.dot, activeIndex5 === 1 ? styles.activeDot : styles.inactiveDot]} />
+        </View>
+      </View>
+
+     
       {userRole === 'admin' && (
         <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('UserList')}>
           <Text style={styles.buttonText}>Servicio</Text>
@@ -135,8 +149,8 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     alignItems: 'center',
-    backgroundColor: '#f5f5f5',
-    padding: 20,
+    backgroundColor: 'fff',
+    padding: 15,
   },
   header: {
     fontSize: 28,
@@ -163,19 +177,16 @@ const styles = StyleSheet.create({
     width: '100%',
     marginBottom: 20,
   },
-  bottomContainer: {
-    width: '109%',
-    alignItems: 'center',
-  },
   squareButtonContainer: {
     width: 120,
-    height: 150,
+    height: 160,
     backgroundColor: '#0303b5',
     borderRadius: 10,
     justifyContent: 'center',
     alignItems: 'center',
     padding: 10,
     marginHorizontal: 5,
+    marginBottom: 15,
   },
   squareButton: {
     width: 80,
@@ -187,7 +198,7 @@ const styles = StyleSheet.create({
     marginHorizontal: 10,
   },
   squareButtonText: {
-    marginTop: 10,
+    marginTop: 17,
     color: '#fff',
     fontSize: 11,
     fontWeight: 'bold',

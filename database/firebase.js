@@ -7,12 +7,20 @@ import "firebase/compat/storage"; // Importa Firebase Storage
 
 // Configuración de Firebase
 const firebaseConfig = {
-  apiKey: "AIzaSyCR5_A2WTF1YKlSNvFkMKVNXPzbefxEzDQ",
-  authDomain: "appmovilcs.firebaseapp.com",
-  projectId: "appmovilcs",
-  storageBucket: "appmovilcs.firebasestorage.app",
-  messagingSenderId: "250369424023",
-  appId: "1:250369424023:web:75b223f565aa22aa0007d2",
+  //apiKey: "AIzaSyCR5_A2WTF1YKlSNvFkMKVNXPzbefxEzDQ",
+  //authDomain: "appmovilcs.firebaseapp.com",
+  //projectId: "appmovilcs",
+  //storageBucket: "appmovilcs.firebasestorage.app",
+  //messagingSenderId: "250369424023",
+  //appId: "1:250369424023:web:75b223f565aa22aa0007d2",
+  //measurementId: 'your-measurement-id'
+   
+  apiKey: "AIzaSyB3Q9ary2kqMwLd3018eDC_xZjOepKzTeo",
+  authDomain: "coldservice-3214d.firebaseapp.com",
+  projectId: "coldservice-3214d",
+  storageBucket: "coldservice-3214d.firebasestorage.com",
+  messagingSenderId: "1083273105380",
+  appId: "1:1083273105380:web:9f059bb2f0ea97772001f1",
   measurementId: 'your-measurement-id'
 };
 

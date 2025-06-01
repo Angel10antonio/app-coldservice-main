@@ -6,7 +6,7 @@ import { collection, getDocs } from 'firebase/firestore';
 
 const ConsultarErroresScreen = () => {
   const [reportes, setReportes] = useState([]);
-
+ 
   const obtenerReportes = async () => {
     try {
       const querySnapshot = await getDocs(collection(db, 'reporte_de_errores'));
@@ -65,7 +65,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     padding: 15,
     marginBottom: 15,
-  },
+  }, 
   titulo: {
     fontSize: 22,
     fontWeight: 'bold',

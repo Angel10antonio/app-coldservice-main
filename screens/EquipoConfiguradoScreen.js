@@ -22,6 +22,7 @@ const EquipoConfiguradoScreen = () => {
   const [ubicacion, setUbicacion] = useState('');
   const [fechaConfiguracion, setFechaConfiguracion] = useState(new Date());
   const [mostrarFecha, setMostrarFecha] = useState(false);
+  const [fechaConfiguracionSeleccionada, setFechaConfiguracionSeleccionada] = useState(false);
   const [tecnicoResponsable, setTecnicoResponsable] = useState('');
   const [voltaje, setVoltaje] = useState('');
   const [capacidad, setCapacidad] = useState('');
@@ -30,9 +31,10 @@ const EquipoConfiguradoScreen = () => {
   const [estado, setEstado] = useState('Operativo');
   const [fechaUltimoMantenimiento, setFechaUltimoMantenimiento] = useState(new Date());
   const [mostrarFechaMantenimiento, setMostrarFechaMantenimiento] = useState(false);
+  const [fechaMantenimientoSeleccionada, setFechaMantenimientoSeleccionada] = useState(false);
 
   const guardarEnFirebase = async () => {
-    if (!nombreEquipo || !marca || !modelo) {
+    if (!nombreEquipo || !marca || !modelo || !fechaConfiguracionSeleccionada || !fechaMantenimientoSeleccionada) {
       Alert.alert('Error', 'Por favor completa al menos los campos obligatorios.');
       return;
     }
@@ -70,6 +72,7 @@ const EquipoConfiguradoScreen = () => {
     setNumeroSerie('');
     setUbicacion('');
     setFechaConfiguracion(new Date());
+    setFechaConfiguracionSeleccionada(false);
     setTecnicoResponsable('');
     setVoltaje('');
     setCapacidad('');
@@ -77,6 +80,7 @@ const EquipoConfiguradoScreen = () => {
     setObservaciones('');
     setEstado('Operativo');
     setFechaUltimoMantenimiento(new Date());
+    setFechaMantenimientoSeleccionada(false);
   };
 
   return (
@@ -102,7 +106,9 @@ const EquipoConfiguradoScreen = () => {
       <TouchableOpacity style={styles.dateButton} onPress={() => setMostrarFecha(true)}>
         <Text style={styles.dateButtonText}>Seleccionar Fecha</Text>
       </TouchableOpacity>
-      <Text style={styles.selectedDateText}>{fechaConfiguracion.toLocaleDateString()}</Text>
+      {fechaConfiguracionSeleccionada && (
+        <Text style={styles.selectedDateText}>{fechaConfiguracion.toLocaleDateString()}</Text>
+      )}
       {mostrarFecha && (
         <DateTimePicker
           value={fechaConfiguracion}
@@ -110,15 +116,16 @@ const EquipoConfiguradoScreen = () => {
           display="default"
           onChange={(event, selectedDate) => {
             setMostrarFecha(false);
-            if (selectedDate) setFechaConfiguracion(selectedDate);
+            if (selectedDate) {
+              setFechaConfiguracion(selectedDate);
+              setFechaConfiguracionSeleccionada(true);
+            }
           }}
         />
       )}
 
       <Text style={styles.label}>Técnico responsable</Text>
       <TextInput style={styles.input} value={tecnicoResponsable} onChangeText={setTecnicoResponsable} />
-
-     
 
       <Text style={styles.label}>Descripción del equipo</Text>
       <TextInput
@@ -148,7 +155,10 @@ const EquipoConfiguradoScreen = () => {
       <TouchableOpacity style={styles.dateButton} onPress={() => setMostrarFechaMantenimiento(true)}>
         <Text style={styles.dateButtonText}>Seleccionar Fecha</Text>
       </TouchableOpacity>
-      <Text style={styles.selectedDateText}>{fechaUltimoMantenimiento.toLocaleDateString()}</Text>
+      <View style={{ height: 30 }} />
+      {fechaMantenimientoSeleccionada && (
+        <Text style={styles.selectedDateText}>{fechaUltimoMantenimiento.toLocaleDateString()}</Text>
+      )}
       {mostrarFechaMantenimiento && (
         <DateTimePicker
           value={fechaUltimoMantenimiento}
@@ -156,7 +166,10 @@ const EquipoConfiguradoScreen = () => {
           display="default"
           onChange={(event, selectedDate) => {
             setMostrarFechaMantenimiento(false);
-            if (selectedDate) setFechaUltimoMantenimiento(selectedDate);
+            if (selectedDate) {
+              setFechaUltimoMantenimiento(selectedDate);
+              setFechaMantenimientoSeleccionada(true);
+            }
           }}
         />
       )}
